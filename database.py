@@ -16,7 +16,6 @@ class Database:
     def create_table(self):
         with self.connect() as conn:
             c = conn.cursor()
-            # Create the tracks table if it doesn't exist
             c.execute('''
                 CREATE TABLE IF NOT EXISTS tracks (
                     id INTEGER PRIMARY KEY,
@@ -29,6 +28,7 @@ class Database:
                     UNIQUE(artist, name)
                 )
             ''')
+        self.add_processed_column()
 
     def add_or_update_track(self, track):
         artist = normalize_string(track['artist'])
@@ -69,8 +69,32 @@ class Database:
         query = '''
         SELECT artist, name, listen_count
         FROM tracks
-        WHERE listen_count >= ?
+        WHERE listen_count >= ? AND processed = 0
         ORDER BY listen_count DESC
         '''
         with self.connect() as conn:
             return conn.execute(query, (min_count,)).fetchall()
+
+    def mark_tracks_as_processed(self, tracks):
+        with self.connect() as conn:
+            c = conn.cursor()
+            for artist, name, _ in tracks:
+                c.execute('''
+                    UPDATE tracks
+                    SET processed = 1
+                    WHERE artist = ? AND name = ?
+                ''', (artist, name))
+            conn.commit()
+
+    def add_processed_column(self):
+        with self.connect() as conn:
+            c = conn.cursor()
+            try:
+                c.execute('ALTER TABLE tracks ADD COLUMN processed BOOLEAN DEFAULT 0')
+                conn.commit()
+                logging.info("Added 'processed' column to tracks table")
+            except sqlite3.OperationalError as e:
+                if "duplicate column name" in str(e):
+                    logging.info("'processed' column already exists in tracks table")
+                else:
+                    raise

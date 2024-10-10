@@ -12,11 +12,13 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from rapidfuzz import fuzz, process
 from utils import normalize_string
+from database import Database
 
 load_dotenv()
 
 # Use environment variable for database file path
 SPOTIFY_DB_FILE = os.getenv('SPOTIFY_DB_FILE', 'spotify_liked_songs.db')
+LASTFM_DB_FILE = os.getenv('LASTFM_DB_FILE', 'lastfm_history.db')
 
 class SpotifyOperations:
     """Handles operations related to Spotify, including searching and liking tracks."""
@@ -88,8 +90,39 @@ class SpotifyOperations:
         c.execute("SELECT name, artist FROM liked_songs")
         liked_songs = c.fetchall()
         conn.close()
-        # Use normalized strings for comparison
-        return set((name, artist) for name, artist in liked_songs)
+        
+        # Check for duplicates
+        liked_set = set()
+        duplicates = set()
+        for name, artist in liked_songs:
+            if (name, artist) in liked_set:
+                duplicates.add((name, artist))
+            else:
+                liked_set.add((name, artist))
+        
+        logging.info(f"Retrieved {len(liked_set)} unique liked songs from local database")
+        if duplicates:
+            logging.warning(f"Found {len(duplicates)} duplicate entries in liked_songs table")
+            for name, artist in list(duplicates)[:5]:  # Log first 5 duplicates
+                logging.warning(f"Duplicate: {artist} - {name}")
+        
+        return liked_set
+
+    def remove_duplicates(self):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("""
+            DELETE FROM liked_songs
+            WHERE rowid NOT IN (
+                SELECT MIN(rowid)
+                FROM liked_songs
+                GROUP BY name, artist
+            )
+        """)
+        removed = c.rowcount
+        conn.commit()
+        conn.close()
+        logging.info(f"Removed {removed} duplicate entries from liked_songs table")
 
     def like_tracks(self, track_ids):
         batch_size = 50  # Spotify allows up to 50 tracks to be liked at once
@@ -100,6 +133,7 @@ class SpotifyOperations:
                 logging.info(f"Liked {len(batch)} tracks")
                 # After liking tracks, add them to the local database
                 self._save_newly_liked_tracks(batch)
+                logging.info(f"Saved {len(batch)} newly liked tracks to local database")
             except spotipy.exceptions.SpotifyException as e:
                 logging.error(f"Error liking tracks: {e}")
                 time.sleep(2)  # Wait before retrying
@@ -119,7 +153,27 @@ class SpotifyOperations:
                 })
             time.sleep(0.1)  # To respect rate limits
 
-        self._save_tracks_to_db(tracks)
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        for item in tracks:
+            track = item['track']
+            name = normalize_string(track['name'])
+            artist = normalize_string(track['artists'][0]['name'])
+            album = normalize_string(track['album']['name'])
+            album_id = track['album']['id']
+            
+            # Check if the track already exists
+            c.execute("SELECT id FROM liked_songs WHERE name = ? AND artist = ?", (name, artist))
+            existing = c.fetchone()
+            if existing:
+                logging.info(f"Track already in database: {artist} - {name}")
+            else:
+                c.execute("INSERT INTO liked_songs VALUES (?, ?, ?, ?, ?, ?)",
+                          (track['id'], name, artist, album, album_id, item['added_at']))
+                logging.info(f"Saving newly liked track: {artist} - {name}")
+        
+        conn.commit()
+        conn.close()
 
     def search_track(self, name, artist):
         """Search for a track on Spotify and return its ID if found."""
@@ -192,29 +246,56 @@ class SpotifyOperations:
         conn.close()
 
     def find_tracks_to_like(self, lastfm_tracks, min_play_count=5):
-        """Find tracks from Last.fm that should be liked on Spotify."""
         spotify_liked = self.get_liked_songs_set()
         tracks_to_like = []
+        processed_tracks = []
 
         for track in lastfm_tracks:
             if track[2] >= min_play_count:
-                name = track[1]  # Already normalized when stored in the database
-                artist = track[0]  # Already normalized when stored in the database
+                name = track[1]
+                artist = track[0]
+                processed_tracks.append((artist, name, track[2]))
 
-                if (name, artist) in spotify_liked:
-                    continue  # Skip already liked tracks
-
-                track_id = self.search_track(name, artist)
-                if track_id:
-                    tracks_to_like.append(track_id)
-                    logging.info(f"Will like: {artist} - {name}")
+                if not self.is_track_liked(name, artist, spotify_liked):
+                    track_id = self.search_track(name, artist)
+                    if track_id:
+                        if not self.is_track_in_database(track_id):
+                            tracks_to_like.append(track_id)
+                            logging.info(f"Will like: {artist} - {name}")
+                        else:
+                            logging.info(f"Track already in database, skipping: {artist} - {name}")
+                    else:
+                        logging.info(f"Couldn't find track on Spotify: {artist} - {name}")
+                        self.add_unfound_track(artist, name)
                 else:
-                    logging.info(f"Couldn't find track on Spotify: {artist} - {name}")
-                    self.add_unfound_track(artist, name)
+                    logging.debug(f"Track already liked, skipping: {artist} - {name}")
             else:
                 break
 
+        # Mark processed tracks in the Last.fm database
+        lastfm_db = Database(db_file=LASTFM_DB_FILE)
+        lastfm_db.mark_tracks_as_processed(processed_tracks)
+
+        logging.info(f"Found {len(processed_tracks)} tracks with {min_play_count}+ plays on Last.fm")
+        logging.info(f"Of these, {len(tracks_to_like)} are new tracks to like on Spotify")
         return tracks_to_like
+
+    def is_track_liked(self, name, artist, spotify_liked):
+        normalized_name = normalize_string(name)
+        normalized_artist = normalize_string(artist)
+        return any(
+            fuzz.ratio(normalized_name, liked_name) > 90 and
+            fuzz.ratio(normalized_artist, liked_artist) > 90
+            for liked_name, liked_artist in spotify_liked
+        )
+
+    def is_track_in_database(self, track_id):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("SELECT id FROM liked_songs WHERE id = ?", (track_id,))
+        result = c.fetchone()
+        conn.close()
+        return result is not None
 
     def add_unfound_track(self, artist, name):
         """Add a track that couldn't be found on Spotify to the unfound_tracks table."""
@@ -316,3 +397,24 @@ class SpotifyOperations:
                       (track['id'], name, artist, album, album_id, item['added_at']))
         conn.commit()
         conn.close()
+
+    def verify_local_database(self):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("SELECT COUNT(*) FROM liked_songs")
+        count = c.fetchone()[0]
+        logging.info(f"Local database contains {count} liked songs")
+        c.execute("SELECT name, artist FROM liked_songs LIMIT 5")
+        sample = c.fetchall()
+        logging.info(f"Sample of liked songs in database: {sample}")
+        conn.close()
+
+    def log_unfound_tracks(self):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("SELECT artist, name FROM unfound_tracks")
+        unfound = c.fetchall()
+        conn.close()
+        logging.info(f"Unfound tracks in database: {len(unfound)}")
+        for artist, name in unfound[:5]:  # Log first 5 for brevity
+            logging.info(f"Unfound: {artist} - {name}")

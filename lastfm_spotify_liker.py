@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 import time
+import sqlite3  # Add this line
 from datetime import datetime, timezone
 import requests
 from dotenv import load_dotenv
@@ -104,7 +105,15 @@ def main():
     try:
         lastfm_db = Database(db_file=LASTFM_DB_FILE)
         spotify_ops = SpotifyOperations(db_file=SPOTIFY_DB_FILE)
-
+        
+        # Ensure the processed column exists
+        lastfm_db.add_processed_column()
+        
+        spotify_ops.verify_local_database()  # Verify database at the start
+        
+        # Check for and remove duplicates
+        spotify_ops.remove_duplicates()
+        
         # Update Last.fm tracks
         last_update = lastfm_db.get_last_update_time()
         if last_update:
@@ -138,10 +147,15 @@ def main():
 
         # Update Spotify liked songs again to ensure local database is current
         spotify_ops.update_liked_songs()
+        
+        # Check for and remove duplicates again
+        spotify_ops.remove_duplicates()
+        
+        spotify_ops.verify_local_database()  # Verify database at the end
 
-    except KeyboardInterrupt:
-        logging.info("Program interrupted by user. Exiting gracefully.")
-        sys.exit(0)
+    except sqlite3.OperationalError as e:
+        logging.error(f"Database error: {e}")
+        sys.exit(1)
     except Exception as e:
         logging.error(f"An unexpected error occurred: {e}")
         sys.exit(1)
