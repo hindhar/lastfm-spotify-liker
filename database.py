@@ -2,7 +2,7 @@
 
 import sqlite3
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from utils import normalize_string
 
 class Database:
@@ -34,6 +34,7 @@ class Database:
         artist = normalize_string(track['artist'])
         name = normalize_string(track['name'])
         album = normalize_string(track.get('album', ''))
+        date = track['date'].astimezone(timezone.utc).isoformat()
         query = '''
         INSERT INTO tracks (artist, name, album, listen_count, last_listened, mbid)
         VALUES (?, ?, ?, 1, ?, ?)
@@ -48,9 +49,9 @@ class Database:
                 artist,
                 name,
                 album,
-                track['date'],
+                date,
                 track.get('mbid', ''),
-                track['date'],
+                date,
                 album,
                 track.get('mbid', '')
             ))
@@ -60,7 +61,8 @@ class Database:
         with self.connect() as conn:
             result = conn.execute(query).fetchone()
         if result and result[0]:
-            return datetime.fromisoformat(result[0])
+            # Ensure the returned datetime is timezone-aware and in UTC
+            return datetime.fromisoformat(result[0]).replace(tzinfo=timezone.utc)
         return None
 
     def get_frequently_played_tracks(self, min_count=5):

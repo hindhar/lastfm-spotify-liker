@@ -2,11 +2,12 @@ import os
 import sys
 import logging
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 import requests
 from dotenv import load_dotenv
 from database import Database
 from spotify_operations import SpotifyOperations
+from utils import normalize_string
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -17,6 +18,11 @@ load_dotenv()
 # Last.fm API credentials
 LASTFM_API_KEY = os.getenv('LASTFM_API_KEY')
 LASTFM_USER = os.getenv('LASTFM_USER')
+MIN_PLAY_COUNT = int(os.getenv('MIN_PLAY_COUNT', 5))
+
+# Database file paths
+LASTFM_DB_FILE = os.getenv('LASTFM_DB_FILE', 'lastfm_history.db')
+SPOTIFY_DB_FILE = os.getenv('SPOTIFY_DB_FILE', 'spotify_liked_songs.db')
 
 def get_new_lastfm_tracks(db, from_timestamp=None):
     url = 'http://ws.audioscrobbler.com/2.0/'
@@ -33,7 +39,7 @@ def get_new_lastfm_tracks(db, from_timestamp=None):
     page = 1
     total_pages = 1
 
-    while page <= total_pages:
+    while True:
         params['page'] = page
         try:
             response = requests.get(url, params=params)
@@ -45,12 +51,16 @@ def get_new_lastfm_tracks(db, from_timestamp=None):
                 break
 
             tracks = data['recenttracks']['track']
+            if not isinstance(tracks, list):
+                tracks = [tracks]
             all_tracks.extend(tracks)
 
-            total_pages = int(data['recenttracks']['@attr']['totalPages'])
-            page += 1
+            total_pages = int(data['recenttracks']['@attr'].get('totalPages', 1))
+            logging.info(f"Fetched page {page} of {total_pages}")
 
-            logging.info(f"Fetched page {page-1} of {total_pages}")
+            if page >= total_pages:
+                break
+            page += 1
 
         except requests.RequestException as e:
             logging.error(f"Network error when fetching Last.fm tracks: {e}")
@@ -61,25 +71,39 @@ def get_new_lastfm_tracks(db, from_timestamp=None):
             break
 
     for track in all_tracks:
-        if 'date' in track:
-            track['date'] = datetime.fromtimestamp(int(track['date']['uts']))
-        else:
-            track['date'] = datetime.now()  # For 'now playing' track
+        try:
+            if 'date' in track:
+                track['date'] = datetime.fromtimestamp(int(track['date']['uts'])).replace(tzinfo=timezone.utc)
+            else:
+                track['date'] = datetime.now(timezone.utc)  # For 'now playing' track
 
-        db.add_or_update_track({
-            'artist': track['artist']['#text'],
-            'name': track['name'],
-            'album': track['album']['#text'],
-            'date': track['date'],
-            'mbid': track.get('mbid', '')
-        })
+            # Safely extract artist name
+            artist_name = track['artist']['#text'] if isinstance(track['artist'], dict) else track['artist']
+
+            # Safely extract album name
+            album_name = track['album']['#text'] if isinstance(track['album'], dict) else track['album']
+
+            # Safely extract track name
+            track_name = track['name']['#text'] if isinstance(track['name'], dict) else track['name']
+
+            db.add_or_update_track({
+                'artist': artist_name,
+                'name': track_name,
+                'album': album_name,
+                'date': track['date'],
+                'mbid': track.get('mbid', '')
+            })
+        except Exception as e:
+            logging.error(f"Error processing track: {track}")
+            logging.exception(e)
+            continue
 
     return len(all_tracks)
 
 def main():
     try:
-        lastfm_db = Database()
-        spotify_ops = SpotifyOperations()
+        lastfm_db = Database(db_file=LASTFM_DB_FILE)
+        spotify_ops = SpotifyOperations(db_file=SPOTIFY_DB_FILE)
 
         # Update Last.fm tracks
         last_update = lastfm_db.get_last_update_time()
@@ -98,11 +122,11 @@ def main():
         logging.info(f"Spotify liked songs database updated.")
 
         # Get frequently played tracks from Last.fm
-        frequently_played = lastfm_db.get_frequently_played_tracks(5)
-        logging.info(f"Found {len(frequently_played)} tracks played more than 5 times on Last.fm")
+        frequently_played = lastfm_db.get_frequently_played_tracks(MIN_PLAY_COUNT)
+        logging.info(f"Found {len(frequently_played)} tracks played more than {MIN_PLAY_COUNT} times on Last.fm")
 
         # Find tracks to be liked
-        tracks_to_like = spotify_ops.find_tracks_to_like(frequently_played, min_play_count=5)
+        tracks_to_like = spotify_ops.find_tracks_to_like(frequently_played, min_play_count=MIN_PLAY_COUNT)
         logging.info(f"Found {len(tracks_to_like)} tracks to like on Spotify")
 
         # Like the tracks on Spotify
@@ -111,6 +135,9 @@ def main():
             logging.info(f"Finished liking tracks on Spotify")
         else:
             logging.info("No new tracks to like on Spotify")
+
+        # Update Spotify liked songs again to ensure local database is current
+        spotify_ops.update_liked_songs()
 
     except KeyboardInterrupt:
         logging.info("Program interrupted by user. Exiting gracefully.")

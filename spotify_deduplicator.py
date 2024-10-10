@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from rapidfuzz import fuzz, process
+from utils import normalize_string
 
 load_dotenv()
 
@@ -18,20 +19,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 class SpotifyDeduplicator:
     def __init__(self):
         self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="user-library-read user-library-modify"))
-
-    def normalize_string(self, s):
-        s = s.lower().strip()
-        # Remove content in parentheses or brackets
-        s = re.sub(r'\s*[\(\[\{].*?[\)\]\}]', '', s)
-        # Remove version-specific keywords
-        keywords = ['remastered', 'live', 'acoustic', 'mono', 'stereo', 'version', 'edit', 'feat.', 'featuring', 'from']
-        for keyword in keywords:
-            s = s.replace(keyword, '')
-        # Remove extra punctuation
-        s = re.sub(r'[^a-zA-Z0-9\s]', '', s)
-        # Remove extra whitespace
-        s = re.sub(r'\s+', ' ', s)
-        return s.strip()
 
     def fetch_all_liked_songs(self):
         offset = 0
@@ -53,8 +40,8 @@ class SpotifyDeduplicator:
         track_map = {}
         for item in tracks:
             track = item['track']
-            name = self.normalize_string(track['name'])
-            artist = self.normalize_string(track['artists'][0]['name'])
+            name = normalize_string(track['name'])
+            artist = normalize_string(track['artists'][0]['name'])
             key = f"{artist} {name}"
             if key not in track_map:
                 track_map[key] = []
@@ -99,11 +86,23 @@ class SpotifyDeduplicator:
             batch_size = 50
             for i in range(0, len(tracks_to_remove), batch_size):
                 batch = tracks_to_remove[i:i+batch_size]
-                try:
-                    self.sp.current_user_saved_tracks_delete(tracks=batch)
-                except spotipy.exceptions.SpotifyException as e:
-                    logging.error(f"Error removing tracks: {e}")
-                    time.sleep(2)
+                retry_count = 0
+                while retry_count < 3:  # Maximum 3 retries
+                    try:
+                        self.sp.current_user_saved_tracks_delete(tracks=batch)
+                        break  # Success, exit the retry loop
+                    except spotipy.exceptions.SpotifyException as e:
+                        if e.http_status == 429:
+                            retry_after = int(e.headers.get('Retry-After', 5))
+                            logging.warning(f"Rate limited by Spotify. Retrying after {retry_after} seconds.")
+                            time.sleep(retry_after)
+                            retry_count += 1
+                        else:
+                            logging.error(f"Error removing tracks: {e}")
+                            break  # Exit the retry loop for non-rate-limiting errors
+                    except Exception as e:
+                        logging.error(f"Unexpected error removing tracks: {e}")
+                        break
                 time.sleep(0.1)
             logging.info(f"Removed {len(tracks_to_remove)} duplicate tracks.")
         else:
