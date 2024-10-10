@@ -2,17 +2,230 @@ Directory Structure:
 ====================
 
 lastfm-spotify-liker/
+    album_saver.py
     spotify_deduplicator.py
     requirements.txt
     database.py
     lastfm_spotify_liker.py
     utils.py
     unfound_tracks.txt
+    remove_duplicate_albums.py
+    hot_100_playlist.py
     spotify_operations.py
 
 
 File Contents:
 ==============
+
+File: album_saver.py
+====================
+
+# album_saver.py
+
+import os
+import sys
+import logging
+import sqlite3
+from datetime import datetime, timezone
+from dotenv import load_dotenv
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
+from database import Database
+from spotify_operations import SpotifyOperations
+from utils import normalize_string
+import random
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Load environment variables
+load_dotenv()
+
+LASTFM_DB_FILE = os.getenv('LASTFM_DB_FILE', 'lastfm_history.db')
+SPOTIFY_DB_FILE = os.getenv('SPOTIFY_DB_FILE', 'spotify_liked_songs.db')
+ALBUM_SAVER_DB_FILE = os.getenv('ALBUM_SAVER_DB_FILE', 'album_saver.db')
+
+class AlbumSaver:
+    def __init__(self):
+        self.lastfm_db = Database(db_file=LASTFM_DB_FILE)
+        self.spotify_ops = SpotifyOperations(db_file=SPOTIFY_DB_FILE)
+        self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="user-library-read user-library-modify"))
+        self.create_album_saver_table()
+
+    def create_album_saver_table(self):
+        conn = sqlite3.connect(ALBUM_SAVER_DB_FILE)
+        c = conn.cursor()
+        c.execute('''CREATE TABLE IF NOT EXISTS saved_albums
+                     (id TEXT PRIMARY KEY, name TEXT, artist TEXT, last_checked DATETIME)''')
+        c.execute('''CREATE TABLE IF NOT EXISTS metadata
+                     (key TEXT PRIMARY KEY, value TEXT)''')
+        conn.commit()
+        conn.close()
+
+    def get_album_tracks(self, album_id):
+        tracks = []
+        results = self.sp.album_tracks(album_id)
+        tracks.extend(results['items'])
+        while results['next']:
+            results = self.sp.next(results)
+            tracks.extend(results['items'])
+        return tracks
+
+    def check_album_conditions(self, album_id):
+        album = self.sp.album(album_id)
+        if 'various artists' in album['artists'][0]['name'].lower():
+            return False
+
+        album_tracks = self.get_album_tracks(album_id)
+        total_tracks = len(album_tracks)
+        
+        if total_tracks <= 3:
+            return False  # Don't add albums with 3 or fewer tracks
+
+        listened_tracks = 0
+        tracks_listened_3_times = 0
+
+        for track in album_tracks:
+            listen_count = self.get_track_listen_count(track['name'], track['artists'][0]['name'])
+            if listen_count > 0:
+                listened_tracks += 1
+            if listen_count >= 3:
+                tracks_listened_3_times += 1
+
+        if total_tracks <= 6:
+            return listened_tracks == total_tracks  # All tracks must be listened to at least once
+
+        # For albums with 7 or more tracks
+        condition1 = listened_tracks >= 0.75 * total_tracks
+        condition2 = tracks_listened_3_times >= 3
+
+        return condition1 or condition2
+
+    def get_track_listen_count(self, track_name, artist_name):
+        normalized_track = normalize_string(track_name)
+        normalized_artist = normalize_string(artist_name)
+        
+        conn = sqlite3.connect(LASTFM_DB_FILE)
+        c = conn.cursor()
+        c.execute("SELECT listen_count FROM tracks WHERE name = ? AND artist = ?", 
+                  (normalized_track, normalized_artist))
+        result = c.fetchone()
+        conn.close()
+
+        return result[0] if result else 0
+
+    def save_album_to_library(self, album_id):
+        try:
+            album = self.sp.album(album_id)
+            album_name = album['name']
+            artist_name = album['artists'][0]['name']
+
+            # Check for duplicates
+            duplicates = self.get_duplicate_albums(album_name, artist_name)
+            if duplicates:
+                chosen_album = self.choose_album_to_keep(duplicates + [album_id])
+                if chosen_album != album_id:
+                    logging.info(f"Not saving album {album_id} as a better version exists")
+                    return
+                else:
+                    # Remove other duplicates
+                    for dup in duplicates:
+                        if dup != album_id:
+                            self.sp.current_user_saved_albums_delete([dup])
+                            logging.info(f"Removed duplicate album {dup}")
+
+            self.sp.current_user_saved_albums_add([album_id])
+            logging.info(f"Saved album {album_id} to library")
+            self.update_saved_album(album_id, album_name, artist_name)
+        except Exception as e:
+            logging.error(f"Error saving album {album_id}: {e}")
+
+    def get_duplicate_albums(self, album_name, artist_name):
+        conn = sqlite3.connect(ALBUM_SAVER_DB_FILE)
+        c = conn.cursor()
+        c.execute("SELECT id FROM saved_albums WHERE name = ? AND artist = ?", (album_name, artist_name))
+        duplicates = [row[0] for row in c.fetchall()]
+        conn.close()
+        return duplicates
+
+    def choose_album_to_keep(self, album_ids):
+        max_liked_songs = -1
+        albums_with_max = []
+
+        for album_id in album_ids:
+            liked_songs = self.count_liked_songs(album_id)
+            if liked_songs > max_liked_songs:
+                max_liked_songs = liked_songs
+                albums_with_max = [album_id]
+            elif liked_songs == max_liked_songs:
+                albums_with_max.append(album_id)
+
+        return random.choice(albums_with_max)
+
+    def count_liked_songs(self, album_id):
+        tracks = self.get_album_tracks(album_id)
+        liked_count = 0
+        for track in tracks:
+            if self.sp.current_user_saved_tracks_contains([track['id']])[0]:
+                liked_count += 1
+        return liked_count
+
+    def update_saved_album(self, album_id, album_name, artist_name):
+        conn = sqlite3.connect(ALBUM_SAVER_DB_FILE)
+        c = conn.cursor()
+        now = datetime.now(timezone.utc).isoformat()
+        c.execute("INSERT OR REPLACE INTO saved_albums (id, name, artist, last_checked) VALUES (?, ?, ?, ?)",
+                  (album_id, album_name, artist_name, now))
+        conn.commit()
+        conn.close()
+
+    def get_last_update_time(self):
+        conn = sqlite3.connect(ALBUM_SAVER_DB_FILE)
+        c = conn.cursor()
+        c.execute("SELECT value FROM metadata WHERE key = 'last_update'")
+        result = c.fetchone()
+        conn.close()
+        if result and result[0]:
+            return datetime.fromisoformat(result[0]).astimezone(timezone.utc)
+        return None
+
+    def set_last_update_time(self, update_time):
+        conn = sqlite3.connect(ALBUM_SAVER_DB_FILE)
+        c = conn.cursor()
+        c.execute("INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)",
+                  ('last_update', update_time.astimezone(timezone.utc).isoformat()))
+        conn.commit()
+        conn.close()
+
+    def process_albums(self, force_full_check=False):
+        last_update = self.get_last_update_time()
+        
+        if last_update is None or force_full_check:
+            logging.info("Performing full album check")
+            album_ids = self.spotify_ops.get_all_album_ids()
+        else:
+            logging.info(f"Checking albums updated since {last_update}")
+            album_ids = self.spotify_ops.get_album_ids_since(last_update)
+
+        for album_id in album_ids:
+            if self.check_album_conditions(album_id):
+                self.save_album_to_library(album_id)
+            else:
+                album = self.sp.album(album_id)
+                self.update_saved_album(album_id, album['name'], album['artists'][0]['name'])  # Mark as checked even if not saved
+
+        self.set_last_update_time(datetime.now(timezone.utc))
+
+def main():
+    try:
+        album_saver = AlbumSaver()
+        force_full_check = len(sys.argv) > 1 and sys.argv[1] == '--full'
+        album_saver.process_albums(force_full_check)
+    except Exception as e:
+        logging.error(f"An unexpected error occurred: {e}")
+
+if __name__ == "__main__":
+    main()
 
 File: spotify_deduplicator.py
 =============================
@@ -177,7 +390,6 @@ class Database:
     def create_table(self):
         with self.connect() as conn:
             c = conn.cursor()
-            # Create the tracks table if it doesn't exist
             c.execute('''
                 CREATE TABLE IF NOT EXISTS tracks (
                     id INTEGER PRIMARY KEY,
@@ -190,6 +402,7 @@ class Database:
                     UNIQUE(artist, name)
                 )
             ''')
+        self.add_processed_column()
 
     def add_or_update_track(self, track):
         artist = normalize_string(track['artist'])
@@ -230,11 +443,35 @@ class Database:
         query = '''
         SELECT artist, name, listen_count
         FROM tracks
-        WHERE listen_count >= ?
+        WHERE listen_count >= ? AND processed = 0
         ORDER BY listen_count DESC
         '''
         with self.connect() as conn:
             return conn.execute(query, (min_count,)).fetchall()
+
+    def mark_tracks_as_processed(self, tracks):
+        with self.connect() as conn:
+            c = conn.cursor()
+            for artist, name, _ in tracks:
+                c.execute('''
+                    UPDATE tracks
+                    SET processed = 1
+                    WHERE artist = ? AND name = ?
+                ''', (artist, name))
+            conn.commit()
+
+    def add_processed_column(self):
+        with self.connect() as conn:
+            c = conn.cursor()
+            try:
+                c.execute('ALTER TABLE tracks ADD COLUMN processed BOOLEAN DEFAULT 0')
+                conn.commit()
+                logging.info("Added 'processed' column to tracks table")
+            except sqlite3.OperationalError as e:
+                if "duplicate column name" in str(e):
+                    logging.info("'processed' column already exists in tracks table")
+                else:
+                    raise
 
 
 File: lastfm_spotify_liker.py
@@ -244,6 +481,7 @@ import os
 import sys
 import logging
 import time
+import sqlite3  # Add this line
 from datetime import datetime, timezone
 import requests
 from dotenv import load_dotenv
@@ -346,7 +584,15 @@ def main():
     try:
         lastfm_db = Database(db_file=LASTFM_DB_FILE)
         spotify_ops = SpotifyOperations(db_file=SPOTIFY_DB_FILE)
-
+        
+        # Ensure the processed column exists
+        lastfm_db.add_processed_column()
+        
+        spotify_ops.verify_local_database()  # Verify database at the start
+        
+        # Check for and remove duplicates
+        spotify_ops.remove_duplicates()
+        
         # Update Last.fm tracks
         last_update = lastfm_db.get_last_update_time()
         if last_update:
@@ -380,10 +626,15 @@ def main():
 
         # Update Spotify liked songs again to ensure local database is current
         spotify_ops.update_liked_songs()
+        
+        # Check for and remove duplicates again
+        spotify_ops.remove_duplicates()
+        
+        spotify_ops.verify_local_database()  # Verify database at the end
 
-    except KeyboardInterrupt:
-        logging.info("Program interrupted by user. Exiting gracefully.")
-        sys.exit(0)
+    except sqlite3.OperationalError as e:
+        logging.error(f"Database error: {e}")
+        sys.exit(1)
     except Exception as e:
         logging.error(f"An unexpected error occurred: {e}")
         sys.exit(1)
@@ -403,7 +654,7 @@ def normalize_string(s):
     # Remove content in parentheses or brackets
     s = re.sub(r'\s*[\(\[\{].*?[\)\]\}]', '', s)
     # Remove version-specific keywords and their accompanying years if any
-    s = re.sub(r'\b(remastered|live|acoustic|mono|stereo|version|edit|feat\.?|featuring|from)\b(\s+\d{4})?', '', s)
+    s = re.sub(r'\b(remastered|live|acoustic|mono|stereo|version|edit|feat\.?|featuring|from|remix)\b(\s+\d{4})?', '', s)
     # Remove extra punctuation (but keep numbers)
     s = re.sub(r'[^a-zA-Z0-9\s]', '', s)
     # Remove extra whitespace
@@ -416,6 +667,328 @@ File: unfound_tracks.txt
 
 
 
+
+File: remove_duplicate_albums.py
+================================
+
+# remove_duplicate_albums.py
+
+import os
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
+from dotenv import load_dotenv
+import random
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Set up Spotify client
+SPOTIPY_CLIENT_ID = os.getenv('SPOTIPY_CLIENT_ID')
+SPOTIPY_CLIENT_SECRET = os.getenv('SPOTIPY_CLIENT_SECRET')
+SPOTIPY_REDIRECT_URI = os.getenv('SPOTIPY_REDIRECT_URI')
+
+print(f"SPOTIPY_CLIENT_ID: {SPOTIPY_CLIENT_ID}")
+print(f"SPOTIPY_CLIENT_SECRET: {SPOTIPY_CLIENT_SECRET}")
+print(f"SPOTIPY_REDIRECT_URI: {SPOTIPY_REDIRECT_URI}")
+
+if not SPOTIPY_CLIENT_ID or not SPOTIPY_CLIENT_SECRET or not SPOTIPY_REDIRECT_URI:
+    raise ValueError("Spotify credentials not found in .env file.")
+
+def get_spotify_client():
+    return spotipy.Spotify(auth_manager=SpotifyOAuth(scope="user-library-read user-library-modify"))
+
+def get_albums_to_remove(sp):
+    albums_to_remove = []
+    offset = 0
+    batch_size = 50
+    album_dict = {}
+
+    while True:
+        results = sp.current_user_saved_albums(limit=batch_size, offset=offset)
+        if not results['items']:
+            break
+        
+        for item in results['items']:
+            album = item['album']
+            artist = album['artists'][0]['name']
+            album_name = album['name']
+            album_id = album['id']
+
+            if 'various artists' in artist.lower():
+                albums_to_remove.append((album_id, album_name, artist))
+            else:
+                key = f"{artist.lower()}:{album_name.lower()}"
+                if key in album_dict:
+                    album_dict[key].append((album_id, album_name, artist))
+                else:
+                    album_dict[key] = [(album_id, album_name, artist)]
+        
+        offset += batch_size
+
+    # Check for duplicates
+    for albums in album_dict.values():
+        if len(albums) > 1:
+            albums_to_keep = choose_albums_to_keep(sp, albums)
+            albums_to_remove.extend([album for album in albums if album not in albums_to_keep])
+
+    return albums_to_remove
+
+def choose_albums_to_keep(sp, albums):
+    deluxe = None
+    remastered = None
+    normal = None
+    max_liked_songs = -1
+    albums_with_max = []
+
+    for album in albums:
+        album_id, album_name, _ = album
+        if 'deluxe' in album_name.lower():
+            deluxe = album
+        elif 'remaster' in album_name.lower():
+            remastered = album
+        else:
+            normal = album
+
+        liked_songs = count_liked_songs(sp, album_id)
+        if liked_songs > max_liked_songs:
+            max_liked_songs = liked_songs
+            albums_with_max = [album]
+        elif liked_songs == max_liked_songs:
+            albums_with_max.append(album)
+
+    to_keep = []
+    if deluxe:
+        to_keep.append(deluxe)
+    if remastered and remastered not in to_keep:
+        to_keep.append(remastered)
+    if normal and normal not in to_keep:
+        to_keep.append(normal)
+
+    if not to_keep:
+        to_keep = [random.choice(albums_with_max)]
+
+    return to_keep
+
+def count_liked_songs(sp, album_id):
+    tracks = sp.album_tracks(album_id)['items']
+    liked_count = 0
+    for track in tracks:
+        if sp.current_user_saved_tracks_contains([track['id']])[0]:
+            liked_count += 1
+    return liked_count
+
+def remove_albums(sp, albums_to_remove):
+    for i in range(0, len(albums_to_remove), 50):
+        batch = albums_to_remove[i:i+50]
+        sp.current_user_saved_albums_delete([album[0] for album in batch])
+        for album in batch:
+            print(f"Removed: {album[2]} - {album[1]}")
+
+def main():
+    sp = get_spotify_client()
+    
+    print("Searching for albums to remove...")
+    albums_to_remove = get_albums_to_remove(sp)
+    
+    if albums_to_remove:
+        print(f"Found {len(albums_to_remove)} albums to remove:")
+        for album in albums_to_remove:
+            print(f"  {album[2]} - {album[1]}")
+        confirm = input("Do you want to remove these albums? (y/n): ")
+        if confirm.lower() == 'y':
+            remove_albums(sp, albums_to_remove)
+            print(f"Total albums removed: {len(albums_to_remove)}")
+        else:
+            print("Operation cancelled.")
+    else:
+        print("No albums to remove found in your library.")
+
+if __name__ == "__main__":
+    main()
+
+File: hot_100_playlist.py
+=========================
+
+import os
+import sys
+import logging
+import sqlite3
+from datetime import datetime, timedelta
+import random
+import requests
+from dotenv import load_dotenv
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
+from utils import normalize_string
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Load environment variables
+load_dotenv()
+
+# Last.fm API credentials
+LASTFM_API_KEY = os.getenv('LASTFM_API_KEY')
+LASTFM_USER = os.getenv('LASTFM_USER')
+
+# Spotify API credentials
+SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
+SPOTIFY_CLIENT_SECRET = os.getenv('SPOTIFY_CLIENT_SECRET')
+SPOTIFY_REDIRECT_URI = os.getenv('SPOTIPY_REDIRECT_URI')
+
+# Database file paths
+LASTFM_100_DAYS_DB = 'lastfm_100_days.db'
+PLAYLIST_NAME = "Bobby's Hot 💯"
+
+class LastFM100DaysDB:
+    def __init__(self, db_file):
+        self.db_file = db_file
+        self.create_table()
+
+    def create_table(self):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute('''CREATE TABLE IF NOT EXISTS tracks
+                     (id INTEGER PRIMARY KEY, artist TEXT, name TEXT, 
+                      play_count INTEGER, last_played DATE)''')
+        conn.commit()
+        conn.close()
+
+    def update_tracks(self, tracks):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        for track in tracks:
+            c.execute('''INSERT OR REPLACE INTO tracks (artist, name, play_count, last_played)
+                         VALUES (?, ?, ?, ?)''',
+                      (track['artist'], track['name'], track['play_count'], track['last_played']))
+        conn.commit()
+        conn.close()
+
+    def remove_old_tracks(self, cut_off_date):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("DELETE FROM tracks WHERE last_played < ?", (cut_off_date,))
+        conn.commit()
+        conn.close()
+
+    def get_top_tracks(self, limit=100):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute('''SELECT artist, name, play_count FROM tracks
+                     ORDER BY play_count DESC LIMIT ?''', (limit,))
+        top_tracks = c.fetchall()
+        conn.close()
+        return top_tracks
+
+def get_lastfm_tracks(from_date, to_date):
+    url = 'http://ws.audioscrobbler.com/2.0/'
+    params = {
+        'method': 'user.getrecenttracks',
+        'user': LASTFM_USER,
+        'api_key': LASTFM_API_KEY,
+        'format': 'json',
+        'limit': 200,
+        'from': int(from_date.timestamp()),
+        'to': int(to_date.timestamp())
+    }
+
+    all_tracks = []
+    page = 1
+
+    while True:
+        params['page'] = page
+        response = requests.get(url, params=params)
+        data = response.json()
+
+        if 'error' in data:
+            logging.error(f"Error fetching Last.fm tracks: {data['message']}")
+            break
+
+        tracks = data['recenttracks']['track']
+        all_tracks.extend(tracks)
+
+        if page >= int(data['recenttracks']['@attr']['totalPages']):
+            break
+        page += 1
+
+    return all_tracks
+
+def process_lastfm_tracks(tracks):
+    processed_tracks = {}
+    for track in tracks:
+        artist = track['artist']['#text']
+        name = track['name']
+        date = datetime.fromtimestamp(int(track['date']['uts']))
+        
+        key = (artist, name)
+        if key in processed_tracks:
+            processed_tracks[key]['play_count'] += 1
+            processed_tracks[key]['last_played'] = max(processed_tracks[key]['last_played'], date)
+        else:
+            processed_tracks[key] = {
+                'artist': artist,
+                'name': name,
+                'play_count': 1,
+                'last_played': date
+            }
+
+    return list(processed_tracks.values())
+
+def get_or_create_playlist(sp, name):
+    playlists = sp.current_user_playlists()
+    for playlist in playlists['items']:
+        if playlist['name'] == name:
+            return playlist['id']
+    
+    user_id = sp.me()['id']
+    playlist = sp.user_playlist_create(user_id, name, public=False)
+    return playlist['id']
+
+def update_playlist(sp, playlist_id, track_ids):
+    sp.playlist_replace_items(playlist_id, track_ids)
+
+def main():
+    # Initialize Spotify client
+    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="playlist-modify-private"))
+
+    # Initialize Last.fm 100 days database
+    lastfm_db = LastFM100DaysDB(LASTFM_100_DAYS_DB)
+
+    # Calculate date range
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=100)
+
+    # Fetch Last.fm tracks
+    lastfm_tracks = get_lastfm_tracks(start_date, end_date)
+    processed_tracks = process_lastfm_tracks(lastfm_tracks)
+
+    # Update database
+    lastfm_db.update_tracks(processed_tracks)
+    lastfm_db.remove_old_tracks(start_date)
+
+    # Get top 100 tracks
+    top_tracks = lastfm_db.get_top_tracks(100)
+
+    # Shuffle the tracks
+    random.shuffle(top_tracks)
+
+    # Search for tracks on Spotify and get their IDs
+    spotify_track_ids = []
+    for artist, name, _ in top_tracks:
+        results = sp.search(q=f"track:{name} artist:{artist}", type='track', limit=1)
+        if results['tracks']['items']:
+            spotify_track_ids.append(results['tracks']['items'][0]['id'])
+
+    # Get or create playlist
+    playlist_id = get_or_create_playlist(sp, PLAYLIST_NAME)
+
+    # Update playlist
+    update_playlist(sp, playlist_id, spotify_track_ids)
+
+    logging.info(f"Playlist '{PLAYLIST_NAME}' updated with {len(spotify_track_ids)} tracks.")
+
+if __name__ == "__main__":
+    main()
 
 File: spotify_operations.py
 ===========================
@@ -434,11 +1007,13 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from rapidfuzz import fuzz, process
 from utils import normalize_string
+from database import Database
 
 load_dotenv()
 
 # Use environment variable for database file path
 SPOTIFY_DB_FILE = os.getenv('SPOTIFY_DB_FILE', 'spotify_liked_songs.db')
+LASTFM_DB_FILE = os.getenv('LASTFM_DB_FILE', 'lastfm_history.db')
 
 class SpotifyOperations:
     """Handles operations related to Spotify, including searching and liking tracks."""
@@ -510,8 +1085,39 @@ class SpotifyOperations:
         c.execute("SELECT name, artist FROM liked_songs")
         liked_songs = c.fetchall()
         conn.close()
-        # Use normalized strings for comparison
-        return set((name, artist) for name, artist in liked_songs)
+        
+        # Check for duplicates
+        liked_set = set()
+        duplicates = set()
+        for name, artist in liked_songs:
+            if (name, artist) in liked_set:
+                duplicates.add((name, artist))
+            else:
+                liked_set.add((name, artist))
+        
+        logging.info(f"Retrieved {len(liked_set)} unique liked songs from local database")
+        if duplicates:
+            logging.warning(f"Found {len(duplicates)} duplicate entries in liked_songs table")
+            for name, artist in list(duplicates)[:5]:  # Log first 5 duplicates
+                logging.warning(f"Duplicate: {artist} - {name}")
+        
+        return liked_set
+
+    def remove_duplicates(self):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("""
+            DELETE FROM liked_songs
+            WHERE rowid NOT IN (
+                SELECT MIN(rowid)
+                FROM liked_songs
+                GROUP BY name, artist
+            )
+        """)
+        removed = c.rowcount
+        conn.commit()
+        conn.close()
+        logging.info(f"Removed {removed} duplicate entries from liked_songs table")
 
     def like_tracks(self, track_ids):
         batch_size = 50  # Spotify allows up to 50 tracks to be liked at once
@@ -522,6 +1128,7 @@ class SpotifyOperations:
                 logging.info(f"Liked {len(batch)} tracks")
                 # After liking tracks, add them to the local database
                 self._save_newly_liked_tracks(batch)
+                logging.info(f"Saved {len(batch)} newly liked tracks to local database")
             except spotipy.exceptions.SpotifyException as e:
                 logging.error(f"Error liking tracks: {e}")
                 time.sleep(2)  # Wait before retrying
@@ -541,7 +1148,27 @@ class SpotifyOperations:
                 })
             time.sleep(0.1)  # To respect rate limits
 
-        self._save_tracks_to_db(tracks)
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        for item in tracks:
+            track = item['track']
+            name = normalize_string(track['name'])
+            artist = normalize_string(track['artists'][0]['name'])
+            album = normalize_string(track['album']['name'])
+            album_id = track['album']['id']
+            
+            # Check if the track already exists
+            c.execute("SELECT id FROM liked_songs WHERE name = ? AND artist = ?", (name, artist))
+            existing = c.fetchone()
+            if existing:
+                logging.info(f"Track already in database: {artist} - {name}")
+            else:
+                c.execute("INSERT INTO liked_songs VALUES (?, ?, ?, ?, ?, ?)",
+                          (track['id'], name, artist, album, album_id, item['added_at']))
+                logging.info(f"Saving newly liked track: {artist} - {name}")
+        
+        conn.commit()
+        conn.close()
 
     def search_track(self, name, artist):
         """Search for a track on Spotify and return its ID if found."""
@@ -614,29 +1241,56 @@ class SpotifyOperations:
         conn.close()
 
     def find_tracks_to_like(self, lastfm_tracks, min_play_count=5):
-        """Find tracks from Last.fm that should be liked on Spotify."""
         spotify_liked = self.get_liked_songs_set()
         tracks_to_like = []
+        processed_tracks = []
 
         for track in lastfm_tracks:
             if track[2] >= min_play_count:
-                name = track[1]  # Already normalized when stored in the database
-                artist = track[0]  # Already normalized when stored in the database
+                name = track[1]
+                artist = track[0]
+                processed_tracks.append((artist, name, track[2]))
 
-                if (name, artist) in spotify_liked:
-                    continue  # Skip already liked tracks
-
-                track_id = self.search_track(name, artist)
-                if track_id:
-                    tracks_to_like.append(track_id)
-                    logging.info(f"Will like: {artist} - {name}")
+                if not self.is_track_liked(name, artist, spotify_liked):
+                    track_id = self.search_track(name, artist)
+                    if track_id:
+                        if not self.is_track_in_database(track_id):
+                            tracks_to_like.append(track_id)
+                            logging.info(f"Will like: {artist} - {name}")
+                        else:
+                            logging.info(f"Track already in database, skipping: {artist} - {name}")
+                    else:
+                        logging.info(f"Couldn't find track on Spotify: {artist} - {name}")
+                        self.add_unfound_track(artist, name)
                 else:
-                    logging.info(f"Couldn't find track on Spotify: {artist} - {name}")
-                    self.add_unfound_track(artist, name)
+                    logging.debug(f"Track already liked, skipping: {artist} - {name}")
             else:
                 break
 
+        # Mark processed tracks in the Last.fm database
+        lastfm_db = Database(db_file=LASTFM_DB_FILE)
+        lastfm_db.mark_tracks_as_processed(processed_tracks)
+
+        logging.info(f"Found {len(processed_tracks)} tracks with {min_play_count}+ plays on Last.fm")
+        logging.info(f"Of these, {len(tracks_to_like)} are new tracks to like on Spotify")
         return tracks_to_like
+
+    def is_track_liked(self, name, artist, spotify_liked):
+        normalized_name = normalize_string(name)
+        normalized_artist = normalize_string(artist)
+        return any(
+            fuzz.ratio(normalized_name, liked_name) > 90 and
+            fuzz.ratio(normalized_artist, liked_artist) > 90
+            for liked_name, liked_artist in spotify_liked
+        )
+
+    def is_track_in_database(self, track_id):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("SELECT id FROM liked_songs WHERE id = ?", (track_id,))
+        result = c.fetchone()
+        conn.close()
+        return result is not None
 
     def add_unfound_track(self, artist, name):
         """Add a track that couldn't be found on Spotify to the unfound_tracks table."""
@@ -738,4 +1392,42 @@ class SpotifyOperations:
                       (track['id'], name, artist, album, album_id, item['added_at']))
         conn.commit()
         conn.close()
+
+    def verify_local_database(self):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("SELECT COUNT(*) FROM liked_songs")
+        count = c.fetchone()[0]
+        logging.info(f"Local database contains {count} liked songs")
+        c.execute("SELECT name, artist FROM liked_songs LIMIT 5")
+        sample = c.fetchall()
+        logging.info(f"Sample of liked songs in database: {sample}")
+        conn.close()
+
+    def log_unfound_tracks(self):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("SELECT artist, name FROM unfound_tracks")
+        unfound = c.fetchall()
+        conn.close()
+        logging.info(f"Unfound tracks in database: {len(unfound)}")
+        for artist, name in unfound[:5]:  # Log first 5 for brevity
+            logging.info(f"Unfound: {artist} - {name}")
+
+    def get_all_album_ids(self):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("SELECT DISTINCT album_id FROM liked_songs")
+        album_ids = [row[0] for row in c.fetchall()]
+        conn.close()
+        return album_ids
+
+    def get_album_ids_since(self, since_datetime):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("SELECT DISTINCT album_id FROM liked_songs WHERE added_at > ?",
+                  (since_datetime.isoformat(),))
+        album_ids = [row[0] for row in c.fetchall()]
+        conn.close()
+        return album_ids
 

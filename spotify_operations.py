@@ -418,3 +418,20 @@ class SpotifyOperations:
         logging.info(f"Unfound tracks in database: {len(unfound)}")
         for artist, name in unfound[:5]:  # Log first 5 for brevity
             logging.info(f"Unfound: {artist} - {name}")
+
+    def get_all_album_ids(self):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("SELECT DISTINCT album_id FROM liked_songs")
+        album_ids = [row[0] for row in c.fetchall()]
+        conn.close()
+        return album_ids
+
+    def get_album_ids_since(self, since_datetime):
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("SELECT DISTINCT album_id FROM liked_songs WHERE added_at > ?",
+                  (since_datetime.isoformat(),))
+        album_ids = [row[0] for row in c.fetchall()]
+        conn.close()
+        return album_ids
