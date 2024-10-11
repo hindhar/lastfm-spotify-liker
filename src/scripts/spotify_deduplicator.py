@@ -1,20 +1,30 @@
 import os
 import sys
+
+# Modify the sys.path to include the project root
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
+
+from src.utils import normalize_string
+
 import logging
 import time
-import re
 from datetime import datetime, timezone
 import sqlite3
 from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from rapidfuzz import fuzz, process
-from utils import normalize_string
-
-load_dotenv()
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
+                    filename='logs/spotify_deduplicator.log', filemode='a')
+
+# Load environment variables
+load_dotenv()
+
+# Database file path
+SPOTIFY_DB_FILE = os.getenv('SPOTIFY_DB_FILE', 'db/spotify_liked_songs.db')
 
 class SpotifyDeduplicator:
     def __init__(self):

@@ -3,10 +3,10 @@
 import sqlite3
 import logging
 from datetime import datetime, timezone
-from utils import normalize_string
+from .utils import normalize_string
 
 class Database:
-    def __init__(self, db_file='lastfm_history.db'):
+    def __init__(self, db_file='db/lastfm_history.db'):
         self.db_file = db_file
         self.create_table()
 

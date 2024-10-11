@@ -11,14 +11,15 @@ from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from rapidfuzz import fuzz, process
-from utils import normalize_string
-from database import Database
+from src.utils import normalize_string
+from src.database import Database
 
+# Load environment variables
 load_dotenv()
 
 # Use environment variable for database file path
-SPOTIFY_DB_FILE = os.getenv('SPOTIFY_DB_FILE', 'spotify_liked_songs.db')
-LASTFM_DB_FILE = os.getenv('LASTFM_DB_FILE', 'lastfm_history.db')
+SPOTIFY_DB_FILE = os.getenv('SPOTIFY_DB_FILE', 'db/spotify_liked_songs.db')
+LASTFM_DB_FILE = os.getenv('LASTFM_DB_FILE', 'db/lastfm_history.db')
 
 class SpotifyOperations:
     """Handles operations related to Spotify, including searching and liking tracks."""
@@ -252,11 +253,13 @@ class SpotifyOperations:
 
         for track in lastfm_tracks:
             if track[2] >= min_play_count:
-                name = track[1]
-                artist = track[0]
-                processed_tracks.append((artist, name, track[2]))
+                name, artist, play_count = track[1], track[0], track[2]
+                processed_tracks.append((artist, name, play_count))
+
+                logging.info(f"Checking track: {artist} - {name} (Play count: {play_count})")
 
                 if not self.is_track_liked(name, artist, spotify_liked):
+                    logging.info(f"Track not liked on Spotify: {artist} - {name}")
                     track_id = self.search_track(name, artist)
                     if track_id:
                         if not self.is_track_in_database(track_id):
@@ -268,8 +271,9 @@ class SpotifyOperations:
                         logging.info(f"Couldn't find track on Spotify: {artist} - {name}")
                         self.add_unfound_track(artist, name)
                 else:
-                    logging.debug(f"Track already liked, skipping: {artist} - {name}")
+                    logging.info(f"Track already liked, skipping: {artist} - {name}")
             else:
+                logging.info(f"Skipping track with low play count: {track[0]} - {track[1]} (Play count: {track[2]})")
                 break
 
         # Mark processed tracks in the Last.fm database

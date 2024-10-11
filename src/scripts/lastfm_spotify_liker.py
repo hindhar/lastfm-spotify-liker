@@ -1,17 +1,31 @@
 import os
 import sys
+
+# Modify the sys.path to include the project root
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
+
 import logging
 import time
-import sqlite3  # Add this line
+import sqlite3
 from datetime import datetime, timezone
 import requests
 from dotenv import load_dotenv
-from database import Database
-from spotify_operations import SpotifyOperations
-from utils import normalize_string
+
+from src.database import Database
+from src.spotify_operations import SpotifyOperations
+from src.utils import normalize_string
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+    handlers=[
+        logging.FileHandler('logs/lastfm_spotify_liker.log'),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
 
 # Load environment variables
 load_dotenv()
@@ -22,8 +36,8 @@ LASTFM_USER = os.getenv('LASTFM_USER')
 MIN_PLAY_COUNT = int(os.getenv('MIN_PLAY_COUNT', 5))
 
 # Database file paths
-LASTFM_DB_FILE = os.getenv('LASTFM_DB_FILE', 'lastfm_history.db')
-SPOTIFY_DB_FILE = os.getenv('SPOTIFY_DB_FILE', 'spotify_liked_songs.db')
+LASTFM_DB_FILE = os.getenv('LASTFM_DB_FILE', 'db/lastfm_history.db')
+SPOTIFY_DB_FILE = os.getenv('SPOTIFY_DB_FILE', 'db/spotify_liked_songs.db')
 
 def get_new_lastfm_tracks(db, from_timestamp=None):
     url = 'http://ws.audioscrobbler.com/2.0/'
@@ -128,7 +142,7 @@ def main():
         # Update Spotify liked songs
         logging.info("Updating Spotify liked songs...")
         new_liked_songs_count = spotify_ops.update_liked_songs()
-        logging.info(f"Spotify liked songs database updated.")
+        logging.info(f"Added {new_liked_songs_count} new liked songs to the Spotify database")
 
         # Get frequently played tracks from Last.fm
         frequently_played = lastfm_db.get_frequently_played_tracks(MIN_PLAY_COUNT)
@@ -136,12 +150,16 @@ def main():
 
         # Find tracks to be liked
         tracks_to_like = spotify_ops.find_tracks_to_like(frequently_played, min_play_count=MIN_PLAY_COUNT)
-        logging.info(f"Found {len(tracks_to_like)} tracks to like on Spotify")
-
-        # Like the tracks on Spotify
+        
         if tracks_to_like:
+            logging.info(f"Found {len(tracks_to_like)} new tracks to like on Spotify:")
+            for track_id in tracks_to_like:
+                track_info = spotify_ops.sp.track(track_id)
+                logging.info(f"  - {track_info['artists'][0]['name']} - {track_info['name']}")
+            
+            # Like the tracks on Spotify
             spotify_ops.like_tracks(tracks_to_like)
-            logging.info(f"Finished liking tracks on Spotify")
+            logging.info(f"Finished liking {len(tracks_to_like)} tracks on Spotify")
         else:
             logging.info("No new tracks to like on Spotify")
 
@@ -158,7 +176,7 @@ def main():
         sys.exit(1)
     except Exception as e:
         logging.error(f"An unexpected error occurred: {e}")
-        sys.exit(1)
+        raise
 
 if __name__ == "__main__":
     main()

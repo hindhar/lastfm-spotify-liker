@@ -2,26 +2,33 @@
 
 import os
 import sys
+
+# Modify the sys.path to include the project root
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
+
+from src.database import Database
+from src.spotify_operations import SpotifyOperations
+from src.utils import normalize_string
+
 import logging
 import sqlite3
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from database import Database
-from spotify_operations import SpotifyOperations
-from utils import normalize_string
 import random
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
+                    filename='logs/album_saver.log', filemode='a')
 
 # Load environment variables
 load_dotenv()
 
-LASTFM_DB_FILE = os.getenv('LASTFM_DB_FILE', 'lastfm_history.db')
-SPOTIFY_DB_FILE = os.getenv('SPOTIFY_DB_FILE', 'spotify_liked_songs.db')
-ALBUM_SAVER_DB_FILE = os.getenv('ALBUM_SAVER_DB_FILE', 'album_saver.db')
+LASTFM_DB_FILE = os.getenv('LASTFM_DB_FILE', 'db/lastfm_history.db')
+SPOTIFY_DB_FILE = os.getenv('SPOTIFY_DB_FILE', 'db/spotify_liked_songs.db')
+ALBUM_SAVER_DB_FILE = os.getenv('ALBUM_SAVER_DB_FILE', 'db/album_saver.db')
 
 class AlbumSaver:
     def __init__(self):

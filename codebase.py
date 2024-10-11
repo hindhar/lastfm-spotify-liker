@@ -1,20 +1,30 @@
 import os
 import fnmatch
 
-def should_ignore(path, ignore_patterns, script_name, output_file):
+def should_ignore_for_structure(path, ignore_patterns):
+    return any(fnmatch.fnmatch(path, pattern) for pattern in ignore_patterns)
+
+def should_ignore_for_content(path, ignore_patterns, script_name, output_file):
     return any(fnmatch.fnmatch(path, pattern) for pattern in ignore_patterns) or \
            path == script_name or path == output_file
 
 def generate_codebase_txt(root_dir, output_file, script_name):
-    ignore_patterns = [
+    structure_ignore_patterns = [
+        '*venv*',  # Virtual environment
+        '__pycache__',  # Python cache
+        'node_modules',  # Node.js modules
+        'build',  # Build directories
+        'dist',  # Distribution directories
+        '.git',  # Git repository folder
+    ]
+
+    content_ignore_patterns = [
         '.*',  # Hidden files and directories
         '*venv*',  # Virtual environment
         '*.pyc',  # Python bytecode
         '*.pyo',  # Python optimized bytecode
         '*.pyd',  # Python DLL file
         '__pycache__',  # Python cache
-        '*.db',  # Database files
-        '*.sqlite3',  # SQLite database files
         '*.log',  # Log files
         '*.swp',  # Vim swap files
         '*.swo',  # Vim swap files
@@ -27,6 +37,7 @@ def generate_codebase_txt(root_dir, output_file, script_name):
         '*.egg',  # Python eggs
         '*.so',  # Shared libraries
         '*.dll',  # Windows DLL files
+        '.git',  # Git repository folder
     ]
 
     with open(output_file, 'w', encoding='utf-8') as f:
@@ -34,8 +45,8 @@ def generate_codebase_txt(root_dir, output_file, script_name):
         f.write("====================\n\n")
 
         for root, dirs, files in os.walk(root_dir):
-            dirs[:] = [d for d in dirs if not should_ignore(d, ignore_patterns, script_name, output_file)]
-            files = [file for file in files if not should_ignore(file, ignore_patterns, script_name, output_file)]
+            dirs[:] = [d for d in dirs if not should_ignore_for_structure(d, structure_ignore_patterns)]
+            files = [file for file in files if not should_ignore_for_structure(file, structure_ignore_patterns)]
 
             level = root.replace(root_dir, '').count(os.sep)
             indent = ' ' * 4 * level
@@ -48,8 +59,8 @@ def generate_codebase_txt(root_dir, output_file, script_name):
         f.write("==============\n\n")
 
         for root, dirs, files in os.walk(root_dir):
-            dirs[:] = [d for d in dirs if not should_ignore(d, ignore_patterns, script_name, output_file)]
-            files = [file for file in files if not should_ignore(file, ignore_patterns, script_name, output_file)]
+            dirs[:] = [d for d in dirs if not should_ignore_for_content(d, content_ignore_patterns, script_name, output_file)]
+            files = [file for file in files if not should_ignore_for_content(file, content_ignore_patterns, script_name, output_file)]
 
             for file in files:
                 file_path = os.path.join(root, file)

@@ -1,10 +1,21 @@
 # remove_duplicate_albums.py
 
 import os
+import sys
+
+# Modify the sys.path to include the project root
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
+
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
 import random
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
+                    filename='logs/remove_duplicate_albums.log', filemode='a')
 
 # Load environment variables from .env file
 load_dotenv()
