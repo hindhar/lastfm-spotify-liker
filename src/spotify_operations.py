@@ -439,3 +439,23 @@ class SpotifyOperations:
         album_ids = [row[0] for row in c.fetchall()]
         conn.close()
         return album_ids
+
+    def search_album(self, album_name, artist_name):
+        """
+        Search for an album on Spotify and return its ID if found.
+        
+        Args:
+        album_name (str): The name of the album to search for.
+        artist_name (str): The name of the artist of the album.
+        
+        Returns:
+        str or None: The Spotify album ID if found, None otherwise.
+        """
+        query = f"album:{album_name} artist:{artist_name}"
+        try:
+            results = self.sp.search(q=query, type='album', limit=1)
+            if results['albums']['items']:
+                return results['albums']['items'][0]['id']
+        except spotipy.exceptions.SpotifyException as e:
+            logging.error(f"Error searching for album: {e}")
+        return None

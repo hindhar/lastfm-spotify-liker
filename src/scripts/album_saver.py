@@ -2,6 +2,14 @@
 
 import os
 import sys
+import signal
+import logging
+import sqlite3
+from datetime import datetime, timezone
+from dotenv import load_dotenv
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
+import random
 
 # Modify the sys.path to include the project root
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -10,14 +18,6 @@ sys.path.insert(0, project_root)
 from src.database import Database
 from src.spotify_operations import SpotifyOperations
 from src.utils import normalize_string
-
-import logging
-import sqlite3
-from datetime import datetime, timezone
-from dotenv import load_dotenv
-import spotipy
-from spotipy.oauth2 import SpotifyOAuth
-import random
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
@@ -28,10 +28,10 @@ load_dotenv()
 
 LASTFM_DB_FILE = os.getenv('LASTFM_DB_FILE', 'db/lastfm_history.db')
 SPOTIFY_DB_FILE = os.getenv('SPOTIFY_DB_FILE', 'db/spotify_liked_songs.db')
-ALBUM_SAVER_DB_FILE = os.getenv('ALBUM_SAVER_DB_FILE', 'db/album_saver.db')
+ALBUM_SAVER_DB_FILE = os.path.join(project_root, 'db', 'album_saver.db')
 
 class AlbumSaver:
-    def __init__(self):
+    def __init__(self, db_file=SPOTIFY_DB_FILE):
         self.lastfm_db = Database(db_file=LASTFM_DB_FILE)
         self.spotify_ops = SpotifyOperations(db_file=SPOTIFY_DB_FILE)
         self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="user-library-read user-library-modify"))
@@ -64,8 +64,8 @@ class AlbumSaver:
         album_tracks = self.get_album_tracks(album_id)
         total_tracks = len(album_tracks)
         
-        if total_tracks <= 3:
-            return False  # Don't add albums with 3 or fewer tracks
+        if total_tracks <= 6:
+            return False  # Don't add albums with 6 or fewer tracks
 
         listened_tracks = 0
         tracks_listened_3_times = 0
@@ -76,9 +76,6 @@ class AlbumSaver:
                 listened_tracks += 1
             if listen_count >= 3:
                 tracks_listened_3_times += 1
-
-        if total_tracks <= 6:
-            return listened_tracks == total_tracks  # All tracks must be listened to at least once
 
         # For albums with 7 or more tracks
         condition1 = listened_tracks >= 0.75 * total_tracks
@@ -182,30 +179,51 @@ class AlbumSaver:
         conn.commit()
         conn.close()
 
+    def get_all_saved_albums(self):
+        conn = sqlite3.connect(ALBUM_SAVER_DB_FILE)
+        c = conn.cursor()
+        c.execute("SELECT id FROM saved_albums")
+        saved_albums = set(row[0] for row in c.fetchall())
+        conn.close()
+        return saved_albums
+
     def process_albums(self, force_full_check=False):
         last_update = self.get_last_update_time()
+        saved_albums = self.get_all_saved_albums()
         
         if last_update is None or force_full_check:
             logging.info("Performing full album check")
-            album_ids = self.spotify_ops.get_all_album_ids()
+            albums_to_check = self.lastfm_db.get_all_albums()
         else:
             logging.info(f"Checking albums updated since {last_update}")
-            album_ids = self.spotify_ops.get_album_ids_since(last_update)
-
-        for album_id in album_ids:
-            if self.check_album_conditions(album_id):
-                self.save_album_to_library(album_id)
-            else:
-                album = self.sp.album(album_id)
-                self.update_saved_album(album_id, album['name'], album['artists'][0]['name'])  # Mark as checked even if not saved
-
+            albums_to_check = self.lastfm_db.get_albums_since(last_update)
+        
+        new_albums_added = 0
+        for album in albums_to_check:
+            album_id = self.spotify_ops.search_album(album['name'], album['artist'])
+            if album_id and album_id not in saved_albums:
+                if self.check_album_conditions(album_id):
+                    self.save_album_to_library(album_id)
+                    new_albums_added += 1
+        
+        logging.info(f"Processed {len(albums_to_check)} albums. Added {new_albums_added} new albums.")
         self.set_last_update_time(datetime.now(timezone.utc))
+
+def timeout_handler(signum, frame):
+    raise TimeoutError("Album saving process took too long")
 
 def main():
     try:
+        signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(300)  # Set a 5-minute timeout
+
         album_saver = AlbumSaver()
         force_full_check = len(sys.argv) > 1 and sys.argv[1] == '--full'
         album_saver.process_albums(force_full_check)
+
+        signal.alarm(0)  # Clear the alarm
+    except TimeoutError as e:
+        logging.error(f"Album saving process timed out: {e}")
     except Exception as e:
         logging.error(f"An unexpected error occurred: {e}")
 

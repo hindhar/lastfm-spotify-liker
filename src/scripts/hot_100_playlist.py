@@ -5,7 +5,7 @@ import sqlite3
 import logging
 import random
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
@@ -34,6 +34,7 @@ SPOTIFY_REDIRECT_URI = os.getenv('SPOTIPY_REDIRECT_URI')
 # Database file paths
 LASTFM_100_DAYS_DB = 'db/lastfm_100_days.db'
 PLAYLIST_NAME = "Bobby's Hot 💯"
+PLAYLIST_ID_FILE = 'playlist_id.txt'
 
 class LastFM100DaysDB:
     def __init__(self, db_file):
@@ -57,29 +58,17 @@ class LastFM100DaysDB:
     def update_tracks(self, tracks):
         conn = sqlite3.connect(self.db_file)
         c = conn.cursor()
+        
+        # Clear existing data
+        c.execute("DELETE FROM tracks")
+        
         for track in tracks:
-            c.execute('''SELECT play_count, last_played FROM tracks
-                         WHERE artist = ? AND name = ? AND album = ?''',
-                      (track['artist'], track['name'], track['album']))
-            result = c.fetchone()
-            if result:
-                existing_play_count, existing_last_played = result
-                # Convert existing_last_played from string to datetime
-                existing_last_played = datetime.fromisoformat(existing_last_played)
-                new_play_count = existing_play_count + track['play_count']
-                new_last_played = max(existing_last_played, track['last_played'])
-                # Convert new_last_played to ISO string for storage
-                new_last_played_str = new_last_played.isoformat()
-                c.execute('''UPDATE tracks
-                             SET play_count = ?, last_played = ?
-                             WHERE artist = ? AND name = ? AND album = ?''',
-                          (new_play_count, new_last_played_str, track['artist'], track['name'], track['album']))
-            else:
-                # Convert last_played to ISO string for storage
-                last_played_str = track['last_played'].isoformat()
-                c.execute('''INSERT INTO tracks (artist, name, album, play_count, last_played)
-                             VALUES (?, ?, ?, ?, ?)''',
-                          (track['artist'], track['name'], track['album'], track['play_count'], last_played_str))
+            c.execute('''INSERT OR REPLACE INTO tracks 
+                         (artist, name, album, play_count, last_played)
+                         VALUES (?, ?, ?, ?, ?)''',
+                      (track['artist'], track['name'], track['album'], 
+                       track['play_count'], track['last_played'].isoformat()))
+        
         conn.commit()
         conn.close()
 
@@ -137,6 +126,7 @@ def get_lastfm_tracks(from_date, to_date):
 
 def process_lastfm_tracks(tracks):
     processed_tracks = {}
+    now = datetime.now(timezone.utc)
     for track in tracks:
         if 'date' not in track:
             # Skip currently playing track
@@ -145,7 +135,11 @@ def process_lastfm_tracks(tracks):
         artist = track['artist']['#text']
         name = track['name']
         album = track['album']['#text'] if 'album' in track and track['album']['#text'] else 'Unknown Album'
-        date = datetime.fromtimestamp(int(track['date']['uts']))
+        date = datetime.fromtimestamp(int(track['date']['uts']), tz=timezone.utc)
+
+        # Only process tracks from the last 100 days
+        if (now - date).days > 100:
+            continue
 
         key = (artist, name, album)
         if key in processed_tracks:
@@ -174,34 +168,33 @@ def normalize_string(s):
     return s
 
 def get_or_create_playlist(sp, name):
-    def normalize(s):
-        # Normalize Unicode characters and convert to lowercase
-        return unicodedata.normalize('NFKD', s).encode('ASCII', 'ignore').decode('ASCII').lower()
+    playlist_id_file = PLAYLIST_ID_FILE
 
-    normalized_name = normalize(name)
+    # Check if playlist ID is stored in file
+    if os.path.exists(playlist_id_file):
+        with open(playlist_id_file, 'r') as f:
+            playlist_id = f.read().strip()
+        # Verify that the playlist still exists and is accessible
+        try:
+            playlist = sp.playlist(playlist_id)
+            if playlist['name'] == name:
+                logging.info(f"Found existing playlist by ID: {playlist['name']}")
+                return playlist_id
+            else:
+                logging.warning(f"Playlist ID found but name doesn't match. Updating name and using playlist.")
+                # Optionally update the playlist name to match
+                sp.user_playlist_change_details(sp.me()['id'], playlist_id, name=name)
+                return playlist_id
+        except spotipy.exceptions.SpotifyException as e:
+            logging.warning(f"Playlist ID not valid or playlist not found. Creating new playlist.")
 
-    playlists = []
-    limit = 50
-    offset = 0
-    user_id = sp.me()['id']
-
-    while True:
-        response = sp.user_playlists(user_id, limit=limit, offset=offset)
-        playlists.extend(response['items'])
-        if response['next']:
-            offset += limit
-        else:
-            break
-
-    for playlist in playlists:
-        playlist_name = playlist['name']
-        normalized_playlist_name = normalize(playlist_name)
-        if normalized_playlist_name == normalized_name:
-            logging.info(f"Found existing playlist: {playlist_name}")
-            return playlist['id']
-
+    # Playlist ID not found or invalid, create a new playlist
     logging.info(f"Playlist '{name}' not found. Creating new playlist.")
+    user_id = sp.me()['id']
     playlist = sp.user_playlist_create(user_id, name, public=False)
+    # Store the new playlist ID
+    with open(playlist_id_file, 'w') as f:
+        f.write(playlist['id'])
     return playlist['id']
 
 def update_playlist(sp, playlist_id, track_ids):
@@ -219,13 +212,13 @@ def update_playlist(sp, playlist_id, track_ids):
 
 def main():
     # Initialize Spotify client
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="playlist-modify-private"))
+    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="playlist-modify-private,playlist-modify-public"))
 
     # Initialize Last.fm 100 days database
     lastfm_db = LastFM100DaysDB(LASTFM_100_DAYS_DB)
 
     # Calculate date range
-    end_date = datetime.now()
+    end_date = datetime.now(timezone.utc)
     start_date = end_date - timedelta(days=100)
 
     # Fetch Last.fm tracks

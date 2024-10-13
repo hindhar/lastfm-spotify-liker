@@ -3,7 +3,7 @@
 import sqlite3
 import logging
 from datetime import datetime, timezone
-from .utils import normalize_string
+from src.utils import normalize_string
 
 class Database:
     def __init__(self, db_file='db/lastfm_history.db'):
@@ -98,3 +98,38 @@ class Database:
                     logging.info("'processed' column already exists in tracks table")
                 else:
                     raise
+
+    def get_albums_since(self, last_update):
+        """
+        Retrieve all albums that have been listened to since the last update.
+        
+        Args:
+        last_update (datetime): The timestamp of the last update.
+        
+        Returns:
+        list: A list of dictionaries, each containing 'name' and 'artist' for an album.
+        """
+        query = """
+        SELECT DISTINCT album, artist 
+        FROM tracks 
+        WHERE last_listened > ?
+        """
+        with self.connect() as conn:
+            c = conn.cursor()
+            c.execute(query, (last_update.isoformat(),))
+            albums = [{'name': row[0], 'artist': row[1]} for row in c.fetchall()]
+        return albums
+
+    def get_all_albums(self):
+        """
+        Retrieve all unique albums from the tracks table.
+        
+        Returns:
+        list: A list of dictionaries, each containing 'name' and 'artist' for an album.
+        """
+        query = "SELECT DISTINCT album, artist FROM tracks"
+        with self.connect() as conn:
+            c = conn.cursor()
+            c.execute(query)
+            albums = [{'name': row[0], 'artist': row[1]} for row in c.fetchall()]
+        return albums

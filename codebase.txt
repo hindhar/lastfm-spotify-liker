@@ -11,15 +11,16 @@ lastfm-spotify-liker/
     .env
     album_saver.db
     .cache
+    playlist_id.txt
     logs/
         album_saver.log
+        hot_100_playlist.log
+        .gitignore
         lastfm_spotify_liker.log
     db/
-        lastfm_history.db
         spotify_liked_songs.db
         lastfm_100_days.db
         .gitignore
-        album_saver.db
     .vscode/
         settings.json
     src/
@@ -46,8 +47,11 @@ File: requirements.txt
 
 certifi==2024.8.30
 charset-normalizer==3.4.0
+fuzzywuzzy==0.18.0
 idna==3.10
+Levenshtein==0.26.0
 python-dotenv==1.0.1
+python-Levenshtein==0.26.0
 RapidFuzz==3.10.0
 redis==5.1.1
 requests==2.32.3
@@ -66,28 +70,21 @@ File: album_saver.db
 Error reading file: 'utf-8' codec can't decode byte 0xd7 in position 27: invalid continuation byte
 
 
-File: db/lastfm_history.db
-==========================
+File: playlist_id.txt
+=====================
 
-Error reading file: 'utf-8' codec can't decode byte 0xaf in position 26: invalid start byte
-
+5iFg7DdS2m8XV8kmQqg4SU
 
 File: db/spotify_liked_songs.db
 ===============================
 
-Error reading file: 'utf-8' codec can't decode byte 0xe5 in position 31: invalid continuation byte
+Error reading file: 'utf-8' codec can't decode byte 0xe6 in position 31: invalid continuation byte
 
 
 File: db/lastfm_100_days.db
 ===========================
 
 Error reading file: 'utf-8' codec can't decode byte 0xd0 in position 99: invalid continuation byte
-
-
-File: db/album_saver.db
-=======================
-
-Error reading file: 'utf-8' codec can't decode byte 0x81 in position 27: invalid start byte
 
 
 File: src/database.py
@@ -477,11 +474,13 @@ class SpotifyOperations:
 
         for track in lastfm_tracks:
             if track[2] >= min_play_count:
-                name = track[1]
-                artist = track[0]
-                processed_tracks.append((artist, name, track[2]))
+                name, artist, play_count = track[1], track[0], track[2]
+                processed_tracks.append((artist, name, play_count))
+
+                logging.info(f"Checking track: {artist} - {name} (Play count: {play_count})")
 
                 if not self.is_track_liked(name, artist, spotify_liked):
+                    logging.info(f"Track not liked on Spotify: {artist} - {name}")
                     track_id = self.search_track(name, artist)
                     if track_id:
                         if not self.is_track_in_database(track_id):
@@ -493,8 +492,9 @@ class SpotifyOperations:
                         logging.info(f"Couldn't find track on Spotify: {artist} - {name}")
                         self.add_unfound_track(artist, name)
                 else:
-                    logging.debug(f"Track already liked, skipping: {artist} - {name}")
+                    logging.info(f"Track already liked, skipping: {artist} - {name}")
             else:
+                logging.info(f"Skipping track with low play count: {track[0]} - {track[1]} (Play count: {track[2]})")
                 break
 
         # Mark processed tracks in the Last.fm database
@@ -668,6 +668,15 @@ File: src/scripts/album_saver.py
 
 import os
 import sys
+
+# Modify the sys.path to include the project root
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
+
+from src.database import Database
+from src.spotify_operations import SpotifyOperations
+from src.utils import normalize_string
+
 import logging
 import sqlite3
 from datetime import datetime, timezone
@@ -675,14 +684,6 @@ from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import random
-
-# Add the project root to the Python path
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.append(project_root)
-
-from src.database import Database
-from src.spotify_operations import SpotifyOperations
-from src.utils import normalize_string
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
@@ -882,19 +883,21 @@ File: src/scripts/spotify_deduplicator.py
 
 import os
 import sys
+
+# Modify the sys.path to include the project root
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
+
+from src.utils import normalize_string
+
 import logging
 import time
-import re
 from datetime import datetime, timezone
 import sqlite3
 from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from rapidfuzz import fuzz, process
-from src.utils import normalize_string
-
-# Add the parent directory to the Python path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
@@ -1023,6 +1026,11 @@ File: src/scripts/lastfm_spotify_liker.py
 
 import os
 import sys
+
+# Modify the sys.path to include the project root
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
+
 import logging
 import time
 import sqlite3
@@ -1030,17 +1038,20 @@ from datetime import datetime, timezone
 import requests
 from dotenv import load_dotenv
 
-# Add the project root to the Python path
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, project_root)
-
 from src.database import Database
 from src.spotify_operations import SpotifyOperations
 from src.utils import normalize_string
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
-                    filename='logs/lastfm_spotify_liker.log', filemode='a')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+    handlers=[
+        logging.FileHandler('logs/lastfm_spotify_liker.log'),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
 
 # Load environment variables
 load_dotenv()
@@ -1157,7 +1168,7 @@ def main():
         # Update Spotify liked songs
         logging.info("Updating Spotify liked songs...")
         new_liked_songs_count = spotify_ops.update_liked_songs()
-        logging.info(f"Spotify liked songs database updated.")
+        logging.info(f"Added {new_liked_songs_count} new liked songs to the Spotify database")
 
         # Get frequently played tracks from Last.fm
         frequently_played = lastfm_db.get_frequently_played_tracks(MIN_PLAY_COUNT)
@@ -1165,12 +1176,16 @@ def main():
 
         # Find tracks to be liked
         tracks_to_like = spotify_ops.find_tracks_to_like(frequently_played, min_play_count=MIN_PLAY_COUNT)
-        logging.info(f"Found {len(tracks_to_like)} tracks to like on Spotify")
-
-        # Like the tracks on Spotify
+        
         if tracks_to_like:
+            logging.info(f"Found {len(tracks_to_like)} new tracks to like on Spotify:")
+            for track_id in tracks_to_like:
+                track_info = spotify_ops.sp.track(track_id)
+                logging.info(f"  - {track_info['artists'][0]['name']} - {track_info['name']}")
+            
+            # Like the tracks on Spotify
             spotify_ops.like_tracks(tracks_to_like)
-            logging.info(f"Finished liking tracks on Spotify")
+            logging.info(f"Finished liking {len(tracks_to_like)} tracks on Spotify")
         else:
             logging.info("No new tracks to like on Spotify")
 
@@ -1187,7 +1202,7 @@ def main():
         sys.exit(1)
     except Exception as e:
         logging.error(f"An unexpected error occurred: {e}")
-        sys.exit(1)
+        raise
 
 if __name__ == "__main__":
     main()
@@ -1200,14 +1215,16 @@ File: src/scripts/remove_duplicate_albums.py
 
 import os
 import sys
+
+# Modify the sys.path to include the project root
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
+
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
 import random
 import logging
-
-# Add the parent directory to the Python path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
@@ -1345,19 +1362,20 @@ File: src/scripts/hot_100_playlist.py
 
 import os
 import sys
-import logging
+import re
 import sqlite3
-from datetime import datetime, timedelta
+import logging
 import random
 import requests
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+import unicodedata
 
-# Add the parent directory to the Python path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from src.utils import normalize_string
+# Modify the sys.path to include the project root
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
@@ -1378,6 +1396,7 @@ SPOTIFY_REDIRECT_URI = os.getenv('SPOTIPY_REDIRECT_URI')
 # Database file paths
 LASTFM_100_DAYS_DB = 'db/lastfm_100_days.db'
 PLAYLIST_NAME = "Bobby's Hot 💯"
+PLAYLIST_ID_FILE = 'playlist_id.txt'
 
 class LastFM100DaysDB:
     def __init__(self, db_file):
@@ -1388,8 +1407,13 @@ class LastFM100DaysDB:
         conn = sqlite3.connect(self.db_file)
         c = conn.cursor()
         c.execute('''CREATE TABLE IF NOT EXISTS tracks
-                     (id INTEGER PRIMARY KEY, artist TEXT, name TEXT, 
-                      play_count INTEGER, last_played DATE)''')
+                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                      artist TEXT,
+                      name TEXT,
+                      album TEXT,
+                      play_count INTEGER,
+                      last_played TEXT,
+                      UNIQUE(artist, name, album))''')
         conn.commit()
         conn.close()
 
@@ -1397,27 +1421,48 @@ class LastFM100DaysDB:
         conn = sqlite3.connect(self.db_file)
         c = conn.cursor()
         for track in tracks:
-            c.execute('''INSERT OR REPLACE INTO tracks (artist, name, play_count, last_played)
-                         VALUES (?, ?, ?, ?)''',
-                      (track['artist'], track['name'], track['play_count'], track['last_played']))
+            c.execute('''SELECT play_count, last_played FROM tracks
+                         WHERE artist = ? AND name = ? AND album = ?''',
+                      (track['artist'], track['name'], track['album']))
+            result = c.fetchone()
+            if result:
+                existing_play_count, existing_last_played = result
+                # Convert existing_last_played from string to datetime
+                existing_last_played = datetime.fromisoformat(existing_last_played)
+                new_play_count = existing_play_count + track['play_count']
+                new_last_played = max(existing_last_played, track['last_played'])
+                # Convert new_last_played to ISO string for storage
+                new_last_played_str = new_last_played.isoformat()
+                c.execute('''UPDATE tracks
+                             SET play_count = ?, last_played = ?
+                             WHERE artist = ? AND name = ? AND album = ?''',
+                          (new_play_count, new_last_played_str, track['artist'], track['name'], track['album']))
+            else:
+                # Convert last_played to ISO string for storage
+                last_played_str = track['last_played'].isoformat()
+                c.execute('''INSERT INTO tracks (artist, name, album, play_count, last_played)
+                             VALUES (?, ?, ?, ?, ?)''',
+                          (track['artist'], track['name'], track['album'], track['play_count'], last_played_str))
         conn.commit()
         conn.close()
 
     def remove_old_tracks(self, cut_off_date):
         conn = sqlite3.connect(self.db_file)
         c = conn.cursor()
-        c.execute("DELETE FROM tracks WHERE last_played < ?", (cut_off_date,))
+        # Convert cut_off_date to ISO string for comparison
+        cut_off_date_str = cut_off_date.isoformat()
+        c.execute("DELETE FROM tracks WHERE last_played < ?", (cut_off_date_str,))
         conn.commit()
         conn.close()
 
-    def get_top_tracks(self, limit=100):
+    def get_all_tracks(self):
         conn = sqlite3.connect(self.db_file)
         c = conn.cursor()
-        c.execute('''SELECT artist, name, play_count FROM tracks
-                     ORDER BY play_count DESC LIMIT ?''', (limit,))
-        top_tracks = c.fetchall()
+        c.execute('''SELECT artist, name, album, play_count FROM tracks
+                     ORDER BY play_count DESC, last_played DESC''')
+        all_tracks = c.fetchall()
         conn.close()
-        return top_tracks
+        return all_tracks
 
 def get_lastfm_tracks(from_date, to_date):
     url = 'http://ws.audioscrobbler.com/2.0/'
@@ -1446,7 +1491,8 @@ def get_lastfm_tracks(from_date, to_date):
         tracks = data['recenttracks']['track']
         all_tracks.extend(tracks)
 
-        if page >= int(data['recenttracks']['@attr']['totalPages']):
+        total_pages = int(data['recenttracks']['@attr']['totalPages'])
+        if page >= total_pages:
             break
         page += 1
 
@@ -1455,11 +1501,16 @@ def get_lastfm_tracks(from_date, to_date):
 def process_lastfm_tracks(tracks):
     processed_tracks = {}
     for track in tracks:
+        if 'date' not in track:
+            # Skip currently playing track
+            continue
+
         artist = track['artist']['#text']
         name = track['name']
+        album = track['album']['#text'] if 'album' in track and track['album']['#text'] else 'Unknown Album'
         date = datetime.fromtimestamp(int(track['date']['uts']))
-        
-        key = (artist, name)
+
+        key = (artist, name, album)
         if key in processed_tracks:
             processed_tracks[key]['play_count'] += 1
             processed_tracks[key]['last_played'] = max(processed_tracks[key]['last_played'], date)
@@ -1467,28 +1518,70 @@ def process_lastfm_tracks(tracks):
             processed_tracks[key] = {
                 'artist': artist,
                 'name': name,
+                'album': album,
                 'play_count': 1,
                 'last_played': date
             }
 
     return list(processed_tracks.values())
 
+def normalize_string(s):
+    # Convert to lowercase
+    s = s.lower()
+    # Remove content inside parentheses
+    s = re.sub(r'\(.*?\)', '', s)
+    # Remove extra spaces
+    s = ' '.join(s.strip().split())
+    # Remove punctuation except ampersand
+    s = re.sub(r'[^\w\s&]', '', s)
+    return s
+
 def get_or_create_playlist(sp, name):
-    playlists = sp.current_user_playlists()
-    for playlist in playlists['items']:
-        if playlist['name'] == name:
-            return playlist['id']
-    
+    playlist_id_file = PLAYLIST_ID_FILE
+
+    # Check if playlist ID is stored in file
+    if os.path.exists(playlist_id_file):
+        with open(playlist_id_file, 'r') as f:
+            playlist_id = f.read().strip()
+        # Verify that the playlist still exists and is accessible
+        try:
+            playlist = sp.playlist(playlist_id)
+            if playlist['name'] == name:
+                logging.info(f"Found existing playlist by ID: {playlist['name']}")
+                return playlist_id
+            else:
+                logging.warning(f"Playlist ID found but name doesn't match. Updating name and using playlist.")
+                # Optionally update the playlist name to match
+                sp.user_playlist_change_details(sp.me()['id'], playlist_id, name=name)
+                return playlist_id
+        except spotipy.exceptions.SpotifyException as e:
+            logging.warning(f"Playlist ID not valid or playlist not found. Creating new playlist.")
+
+    # Playlist ID not found or invalid, create a new playlist
+    logging.info(f"Playlist '{name}' not found. Creating new playlist.")
     user_id = sp.me()['id']
     playlist = sp.user_playlist_create(user_id, name, public=False)
+    # Store the new playlist ID
+    with open(playlist_id_file, 'w') as f:
+        f.write(playlist['id'])
     return playlist['id']
 
 def update_playlist(sp, playlist_id, track_ids):
-    sp.playlist_replace_items(playlist_id, track_ids)
+    logging.info(f"Updating playlist {playlist_id} with {len(track_ids)} tracks")
+
+    # Randomize the order of tracks
+    random.shuffle(track_ids)
+
+    # Clear the playlist first
+    sp.playlist_replace_items(playlist_id, [])
+    # Spotify API allows up to 100 tracks per request
+    for i in range(0, len(track_ids), 100):
+        sp.playlist_add_items(playlist_id, track_ids[i:i+100])
+    logging.info("Playlist update completed with randomized order")
 
 def main():
     # Initialize Spotify client
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="playlist-modify-private"))
+    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="playlist-modify-private,playlist-modify-public"))
 
     # Initialize Last.fm 100 days database
     lastfm_db = LastFM100DaysDB(LASTFM_100_DAYS_DB)
@@ -1505,26 +1598,109 @@ def main():
     lastfm_db.update_tracks(processed_tracks)
     lastfm_db.remove_old_tracks(start_date)
 
-    # Get top 100 tracks
-    top_tracks = lastfm_db.get_top_tracks(100)
+    # Get all tracks sorted by play count descending
+    all_tracks = lastfm_db.get_all_tracks()
 
-    # Shuffle the tracks
-    random.shuffle(top_tracks)
+    # Build a dictionary to keep track of the album with the highest play count for each (artist, name)
+    track_album_playcount = {}
+    for artist, name, album, play_count in all_tracks:
+        norm_artist = normalize_string(artist)
+        norm_name = normalize_string(name)
+        key = (norm_artist, norm_name)
+        if key not in track_album_playcount:
+            track_album_playcount[key] = {
+                'artist': artist,
+                'name': name,
+                'album': album,
+                'play_count': play_count
+            }
+        else:
+            if play_count > track_album_playcount[key]['play_count']:
+                track_album_playcount[key] = {
+                    'artist': artist,
+                    'name': name,
+                    'album': album,
+                    'play_count': play_count
+                }
 
-    # Search for tracks on Spotify and get their IDs
+    # Now, get the top 100 tracks based on play count
+    sorted_tracks = sorted(track_album_playcount.values(), key=lambda x: x['play_count'], reverse=True)
+
+    # Build the list of tracks to add to the playlist
     spotify_track_ids = []
-    for artist, name, _ in top_tracks:
-        results = sp.search(q=f"track:{name} artist:{artist}", type='track', limit=1)
-        if results['tracks']['items']:
-            spotify_track_ids.append(results['tracks']['items'][0]['id'])
+    track_count = 0
+    for track_info in sorted_tracks:
+        if track_count >= 100:
+            break
+
+        artist = track_info['artist']
+        name = track_info['name']
+        album = track_info['album']
+        play_count = track_info['play_count']
+
+        logging.info(f"Searching for track: {artist} - {name} (Album: {album}, Play count: {play_count})")
+
+        # Try to find the track on Spotify
+        found = False
+        queries = [
+            f'track:"{name}" artist:"{artist}" album:"{album}"',
+            f'track:"{name}" artist:"{artist}"',
+            f'track:"{name}"',
+        ]
+        for query in queries:
+            results = sp.search(q=query, type='track', limit=5)
+            if results['tracks']['items']:
+                # Try to find the best match
+                for item in results['tracks']['items']:
+                    spotify_track = item['name']
+                    spotify_artist = item['artists'][0]['name']
+                    spotify_album = item['album']['name']
+                    # Normalize the names
+                    norm_spotify_artist = normalize_string(spotify_artist)
+                    norm_spotify_name = normalize_string(spotify_track)
+                    norm_spotify_album = normalize_string(spotify_album)
+                    norm_artist = normalize_string(artist)
+                    norm_name = normalize_string(name)
+                    norm_album = normalize_string(album)
+                    if norm_spotify_artist == norm_artist and norm_spotify_name == norm_name and norm_spotify_album == norm_album:
+                        spotify_track_ids.append(item['id'])
+                        found = True
+                        track_count += 1
+                        logging.info(f"Found exact match: {spotify_artist} - {spotify_track} ({spotify_album})")
+                        break
+                if found:
+                    break
+        if not found:
+            logging.warning(f"Could not find exact match on Spotify: {artist} - {name} ({album})")
+            # Try to find the best available version
+            for query in queries:
+                results = sp.search(q=query, type='track', limit=5)
+                if results['tracks']['items']:
+                    item = results['tracks']['items'][0]
+                    spotify_track_ids.append(item['id'])
+                    track_count += 1
+                    logging.info(f"Added closest match: {item['artists'][0]['name']} - {item['name']} ({item['album']['name']})")
+                    found = True
+                    break
+
+    # Ensure we only have 100 tracks
+    spotify_track_ids = spotify_track_ids[:100]
 
     # Get or create playlist
     playlist_id = get_or_create_playlist(sp, PLAYLIST_NAME)
 
-    # Update playlist
+    # Update playlist with randomized order
     update_playlist(sp, playlist_id, spotify_track_ids)
 
-    logging.info(f"Playlist '{PLAYLIST_NAME}' updated with {len(spotify_track_ids)} tracks.")
+    logging.info(f"Playlist '{PLAYLIST_NAME}' updated with {len(spotify_track_ids)} tracks in random order.")
+
+    # Get the playlist link
+    playlist_info = sp.playlist(playlist_id)
+    playlist_link = playlist_info['external_urls']['spotify']
+
+    print(f"\nPlaylist updated successfully!")
+    print(f"You can access your playlist '{PLAYLIST_NAME}' here: {playlist_link}")
+    logging.info(f"Playlist link: {playlist_link}")
 
 if __name__ == "__main__":
     main()
