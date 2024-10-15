@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# hot_100_playlist.py
+
 import os
 import sys
 import re
@@ -5,19 +8,19 @@ import sqlite3
 import logging
 import random
 import requests
+import time  # <-- Add this import
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-import unicodedata
+from rapidfuzz import fuzz
+from typing import List, Dict, Tuple, Optional
 
 # Modify the sys.path to include the project root
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, project_root)
 
-# Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
-                    filename='logs/hot_100_playlist.log', filemode='a')
+from src.utils import normalize_string, get_user_input_with_timeout
 
 # Load environment variables
 load_dotenv()
@@ -33,64 +36,78 @@ SPOTIFY_REDIRECT_URI = os.getenv('SPOTIPY_REDIRECT_URI')
 
 # Database file paths
 LASTFM_100_DAYS_DB = 'db/lastfm_100_days.db'
-PLAYLIST_NAME = "Bobby's Hot 💯"
+
+# Playlist settings
+DEFAULT_PLAYLIST_NAME = "Bobby's Hot 💯"
 PLAYLIST_ID_FILE = 'playlist_id.txt'
+DEFAULT_TIME_RANGE_DAYS = 100
+DEFAULT_TRACK_LIMIT = 100
+
+# Set up logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    filename='logs/hot_100_playlist.log',
+    filemode='a'
+)
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console.setFormatter(formatter)
+logging.getLogger('').addHandler(console)
 
 class LastFM100DaysDB:
-    def __init__(self, db_file):
+    def __init__(self, db_file: str):
         self.db_file = db_file
         self.create_table()
 
-    def create_table(self):
-        conn = sqlite3.connect(self.db_file)
-        c = conn.cursor()
-        c.execute('''CREATE TABLE IF NOT EXISTS tracks
-                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                      artist TEXT,
-                      name TEXT,
-                      album TEXT,
-                      play_count INTEGER,
-                      last_played TEXT,
-                      UNIQUE(artist, name, album))''')
-        conn.commit()
-        conn.close()
+    def create_table(self) -> None:
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            c.execute('''CREATE TABLE IF NOT EXISTS tracks
+                         (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                          artist TEXT,
+                          name TEXT,
+                          album TEXT,
+                          play_count INTEGER,
+                          last_played TEXT,
+                          UNIQUE(artist, name, album))''')
+            conn.commit()
+        logging.info("Initialized tracks table in Last.fm 100 Days database.")
 
-    def update_tracks(self, tracks):
-        conn = sqlite3.connect(self.db_file)
-        c = conn.cursor()
-        
-        # Clear existing data
-        c.execute("DELETE FROM tracks")
-        
-        for track in tracks:
-            c.execute('''INSERT OR REPLACE INTO tracks 
-                         (artist, name, album, play_count, last_played)
-                         VALUES (?, ?, ?, ?, ?)''',
-                      (track['artist'], track['name'], track['album'], 
-                       track['play_count'], track['last_played'].isoformat()))
-        
-        conn.commit()
-        conn.close()
+    def update_tracks(self, tracks: List[Dict]) -> None:
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            # Clear existing data
+            c.execute("DELETE FROM tracks")
+            for track in tracks:
+                c.execute('''INSERT OR REPLACE INTO tracks 
+                             (artist, name, album, play_count, last_played)
+                             VALUES (?, ?, ?, ?, ?)''',
+                          (track['artist'], track['name'], track['album'], 
+                           track['play_count'], track['last_played'].isoformat()))
+            conn.commit()
+        logging.info(f"Updated database with {len(tracks)} tracks.")
 
-    def remove_old_tracks(self, cut_off_date):
-        conn = sqlite3.connect(self.db_file)
-        c = conn.cursor()
-        # Convert cut_off_date to ISO string for comparison
-        cut_off_date_str = cut_off_date.isoformat()
-        c.execute("DELETE FROM tracks WHERE last_played < ?", (cut_off_date_str,))
-        conn.commit()
-        conn.close()
+    def remove_old_tracks(self, cut_off_date: datetime) -> None:
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            cut_off_date_str = cut_off_date.isoformat()
+            c.execute("DELETE FROM tracks WHERE last_played < ?", (cut_off_date_str,))
+            removed = c.rowcount
+            conn.commit()
+        logging.info(f"Removed {removed} tracks older than {cut_off_date_str}.")
 
-    def get_all_tracks(self):
-        conn = sqlite3.connect(self.db_file)
-        c = conn.cursor()
-        c.execute('''SELECT artist, name, album, play_count FROM tracks
-                     ORDER BY play_count DESC, last_played DESC''')
-        all_tracks = c.fetchall()
-        conn.close()
+    def get_all_tracks(self) -> List[Tuple]:
+        with sqlite3.connect(self.db_file) as conn:
+            c = conn.cursor()
+            c.execute('''SELECT artist, name, album, play_count FROM tracks
+                         ORDER BY play_count DESC, last_played DESC''')
+            all_tracks = c.fetchall()
+        logging.info(f"Retrieved {len(all_tracks)} tracks from the database.")
         return all_tracks
 
-def get_lastfm_tracks(from_date, to_date):
+def get_lastfm_tracks(from_date: datetime, to_date: datetime) -> List[Dict]:
     url = 'http://ws.audioscrobbler.com/2.0/'
     params = {
         'method': 'user.getrecenttracks',
@@ -105,69 +122,82 @@ def get_lastfm_tracks(from_date, to_date):
     all_tracks = []
     page = 1
 
+    logging.info("Starting to fetch tracks from Last.fm...")
+
     while True:
         params['page'] = page
-        response = requests.get(url, params=params)
-        data = response.json()
+        try:
+            response = requests.get(url, params=params, timeout=10)
+            response.raise_for_status()
+            data = response.json()
 
-        if 'error' in data:
-            logging.error(f"Error fetching Last.fm tracks: {data['message']}")
+            if 'error' in data:
+                logging.error(f"Error fetching Last.fm tracks: {data['message']}")
+                break
+
+            tracks = data['recenttracks']['track']
+            if not isinstance(tracks, list):
+                tracks = [tracks]
+            all_tracks.extend(tracks)
+
+            total_pages = int(data['recenttracks']['@attr']['totalPages'])
+            logging.info(f"Fetched page {page} of {total_pages} ({len(tracks)} tracks)")
+
+            if page >= total_pages:
+                break
+            page += 1
+            time.sleep(0.2)  # Sleep to respect API rate limits
+
+        except requests.RequestException as e:
+            logging.error(f"Network error when fetching Last.fm tracks: {e}")
+            time.sleep(5)
+            continue  # Retry on network errors
+        except Exception as e:
+            logging.error(f"Unexpected error in get_lastfm_tracks: {e}", exc_info=True)
             break
 
-        tracks = data['recenttracks']['track']
-        all_tracks.extend(tracks)
-
-        total_pages = int(data['recenttracks']['@attr']['totalPages'])
-        if page >= total_pages:
-            break
-        page += 1
-
+    logging.info(f"Fetched a total of {len(all_tracks)} tracks from Last.fm")
     return all_tracks
 
-def process_lastfm_tracks(tracks):
+def process_lastfm_tracks(tracks: List[Dict]) -> List[Dict]:
     processed_tracks = {}
     now = datetime.now(timezone.utc)
+
+    logging.info("Processing Last.fm tracks...")
+
     for track in tracks:
-        if 'date' not in track:
-            # Skip currently playing track
+        try:
+            if 'date' not in track:
+                continue  # Skip currently playing track
+
+            artist = track['artist']['#text']
+            name = track['name']
+            album = track['album']['#text'] if track['album']['#text'] else 'Unknown Album'
+            date = datetime.fromtimestamp(int(track['date']['uts']), tz=timezone.utc)
+
+            if (now - date).days > DEFAULT_TIME_RANGE_DAYS:
+                continue
+
+            key = (artist.lower(), name.lower(), album.lower())
+            if key in processed_tracks:
+                processed_tracks[key]['play_count'] += 1
+                processed_tracks[key]['last_played'] = max(processed_tracks[key]['last_played'], date)
+            else:
+                processed_tracks[key] = {
+                    'artist': artist,
+                    'name': name,
+                    'album': album,
+                    'play_count': 1,
+                    'last_played': date
+                }
+        except Exception as e:
+            logging.error(f"Error processing track: {track}", exc_info=True)
             continue
 
-        artist = track['artist']['#text']
-        name = track['name']
-        album = track['album']['#text'] if 'album' in track and track['album']['#text'] else 'Unknown Album'
-        date = datetime.fromtimestamp(int(track['date']['uts']), tz=timezone.utc)
-
-        # Only process tracks from the last 100 days
-        if (now - date).days > 100:
-            continue
-
-        key = (artist, name, album)
-        if key in processed_tracks:
-            processed_tracks[key]['play_count'] += 1
-            processed_tracks[key]['last_played'] = max(processed_tracks[key]['last_played'], date)
-        else:
-            processed_tracks[key] = {
-                'artist': artist,
-                'name': name,
-                'album': album,
-                'play_count': 1,
-                'last_played': date
-            }
-
+    logging.info(f"Processed {len(processed_tracks)} unique tracks.")
     return list(processed_tracks.values())
 
-def normalize_string(s):
-    # Convert to lowercase
-    s = s.lower()
-    # Remove content inside parentheses
-    s = re.sub(r'\(.*?\)', '', s)
-    # Remove extra spaces
-    s = ' '.join(s.strip().split())
-    # Remove punctuation except ampersand
-    s = re.sub(r'[^\w\s&]', '', s)
-    return s
-
-def get_or_create_playlist(sp, name):
+def get_or_create_playlist(sp: spotipy.Spotify, name: str) -> str:
     playlist_id_file = PLAYLIST_ID_FILE
 
     # Check if playlist ID is stored in file
@@ -178,18 +208,17 @@ def get_or_create_playlist(sp, name):
         try:
             playlist = sp.playlist(playlist_id)
             if playlist['name'] == name:
-                logging.info(f"Found existing playlist by ID: {playlist['name']}")
+                logging.info(f"Found existing playlist: {playlist['name']}")
                 return playlist_id
             else:
-                logging.warning(f"Playlist ID found but name doesn't match. Updating name and using playlist.")
-                # Optionally update the playlist name to match
+                logging.info(f"Updating playlist name to: {name}")
                 sp.user_playlist_change_details(sp.me()['id'], playlist_id, name=name)
                 return playlist_id
         except spotipy.exceptions.SpotifyException as e:
             logging.warning(f"Playlist ID not valid or playlist not found. Creating new playlist.")
 
     # Playlist ID not found or invalid, create a new playlist
-    logging.info(f"Playlist '{name}' not found. Creating new playlist.")
+    logging.info(f"Creating new playlist: {name}")
     user_id = sp.me()['id']
     playlist = sp.user_playlist_create(user_id, name, public=False)
     # Store the new playlist ID
@@ -197,7 +226,7 @@ def get_or_create_playlist(sp, name):
         f.write(playlist['id'])
     return playlist['id']
 
-def update_playlist(sp, playlist_id, track_ids):
+def update_playlist(sp: spotipy.Spotify, playlist_id: str, track_ids: List[str]) -> None:
     logging.info(f"Updating playlist {playlist_id} with {len(track_ids)} tracks")
 
     # Randomize the order of tracks
@@ -207,131 +236,117 @@ def update_playlist(sp, playlist_id, track_ids):
     sp.playlist_replace_items(playlist_id, [])
     # Spotify API allows up to 100 tracks per request
     for i in range(0, len(track_ids), 100):
-        sp.playlist_add_items(playlist_id, track_ids[i:i+100])
+        batch = track_ids[i:i+100]
+        sp.playlist_add_items(playlist_id, batch)
+        logging.info(f"Added {len(batch)} tracks to playlist")
+        time.sleep(0.2)  # Sleep to respect API rate limits
+
     logging.info("Playlist update completed with randomized order")
 
 def main():
-    # Initialize Spotify client
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="playlist-modify-private,playlist-modify-public"))
+    try:
+        # Prompt the user for playlist name and time range
+        playlist_name = DEFAULT_PLAYLIST_NAME
+        time_range_days = DEFAULT_TIME_RANGE_DAYS
+        track_limit = DEFAULT_TRACK_LIMIT
 
-    # Initialize Last.fm 100 days database
-    lastfm_db = LastFM100DaysDB(LASTFM_100_DAYS_DB)
+        # Initialize Spotify client
+        sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="playlist-modify-private,playlist-modify-public"))
 
-    # Calculate date range
-    end_date = datetime.now(timezone.utc)
-    start_date = end_date - timedelta(days=100)
+        # Initialize Last.fm database
+        lastfm_db = LastFM100DaysDB(LASTFM_100_DAYS_DB)
 
-    # Fetch Last.fm tracks
-    lastfm_tracks = get_lastfm_tracks(start_date, end_date)
-    processed_tracks = process_lastfm_tracks(lastfm_tracks)
+        # Calculate date range
+        end_date = datetime.utcnow().replace(tzinfo=timezone.utc)
+        start_date = end_date - timedelta(days=time_range_days)
 
-    # Update database
-    lastfm_db.update_tracks(processed_tracks)
-    lastfm_db.remove_old_tracks(start_date)
+        # Fetch Last.fm tracks
+        lastfm_tracks = get_lastfm_tracks(start_date, end_date)
+        processed_tracks = process_lastfm_tracks(lastfm_tracks)
 
-    # Get all tracks sorted by play count descending
-    all_tracks = lastfm_db.get_all_tracks()
+        # Update database
+        lastfm_db.update_tracks(processed_tracks)
+        lastfm_db.remove_old_tracks(start_date)
 
-    # Build a dictionary to keep track of the album with the highest play count for each (artist, name)
-    track_album_playcount = {}
-    for artist, name, album, play_count in all_tracks:
-        norm_artist = normalize_string(artist)
-        norm_name = normalize_string(name)
-        key = (norm_artist, norm_name)
-        if key not in track_album_playcount:
-            track_album_playcount[key] = {
-                'artist': artist,
-                'name': name,
-                'album': album,
-                'play_count': play_count
-            }
-        else:
-            if play_count > track_album_playcount[key]['play_count']:
-                track_album_playcount[key] = {
+        # Get all tracks sorted by play count descending
+        all_tracks = lastfm_db.get_all_tracks()
+
+        # Build a dictionary to keep track of the highest play count for each track
+        track_dict = {}
+        for artist, name, album, play_count in all_tracks:
+            key = (normalize_string(artist), normalize_string(name))
+            if key not in track_dict or play_count > track_dict[key]['play_count']:
+                track_dict[key] = {
                     'artist': artist,
                     'name': name,
                     'album': album,
                     'play_count': play_count
                 }
 
-    # Now, get the top 100 tracks based on play count
-    sorted_tracks = sorted(track_album_playcount.values(), key=lambda x: x['play_count'], reverse=True)
+        # Get the top tracks based on play count
+        sorted_tracks = sorted(track_dict.values(), key=lambda x: x['play_count'], reverse=True)
 
-    # Build the list of tracks to add to the playlist
-    spotify_track_ids = []
-    track_count = 0
-    for track_info in sorted_tracks:
-        if track_count >= 100:
-            break
+        # Build the list of tracks to add to the playlist
+        spotify_track_ids = []
+        track_count = 0
+        for track_info in sorted_tracks:
+            if track_count >= track_limit:
+                break
 
-        artist = track_info['artist']
-        name = track_info['name']
-        album = track_info['album']
-        play_count = track_info['play_count']
+            artist = track_info['artist']
+            name = track_info['name']
+            album = track_info['album']
+            play_count = track_info['play_count']
 
-        logging.info(f"Searching for track: {artist} - {name} (Album: {album}, Play count: {play_count})")
+            logging.info(f"Searching for track: {artist} - {name} (Album: {album}, Play count: {play_count})")
 
-        # Try to find the track on Spotify
-        found = False
-        queries = [
-            f'track:"{name}" artist:"{artist}" album:"{album}"',
-            f'track:"{name}" artist:"{artist}"',
-            f'track:"{name}"',
-        ]
-        for query in queries:
-            results = sp.search(q=query, type='track', limit=5)
-            if results['tracks']['items']:
-                # Try to find the best match
+            # Search for the track on Spotify using fuzzy matching
+            query = f"track:{name} artist:{artist}"
+            try:
+                results = sp.search(q=query, type='track', limit=10)
+                best_match_id = None
+                highest_score = 0
                 for item in results['tracks']['items']:
-                    spotify_track = item['name']
                     spotify_artist = item['artists'][0]['name']
-                    spotify_album = item['album']['name']
-                    # Normalize the names
-                    norm_spotify_artist = normalize_string(spotify_artist)
-                    norm_spotify_name = normalize_string(spotify_track)
-                    norm_spotify_album = normalize_string(spotify_album)
-                    norm_artist = normalize_string(artist)
-                    norm_name = normalize_string(name)
-                    norm_album = normalize_string(album)
-                    if norm_spotify_artist == norm_artist and norm_spotify_name == norm_name and norm_spotify_album == norm_album:
-                        spotify_track_ids.append(item['id'])
-                        found = True
-                        track_count += 1
-                        logging.info(f"Found exact match: {spotify_artist} - {spotify_track} ({spotify_album})")
-                        break
-                if found:
-                    break
-        if not found:
-            logging.warning(f"Could not find exact match on Spotify: {artist} - {name} ({album})")
-            # Try to find the best available version
-            for query in queries:
-                results = sp.search(q=query, type='track', limit=5)
-                if results['tracks']['items']:
-                    item = results['tracks']['items'][0]
-                    spotify_track_ids.append(item['id'])
+                    spotify_name = item['name']
+                    artist_score = fuzz.token_sort_ratio(normalize_string(artist), normalize_string(spotify_artist))
+                    name_score = fuzz.token_sort_ratio(normalize_string(name), normalize_string(spotify_name))
+                    total_score = (artist_score + name_score) / 2
+                    if total_score > highest_score:
+                        highest_score = total_score
+                        best_match_id = item['id']
+                if highest_score > 80 and best_match_id:
+                    spotify_track_ids.append(best_match_id)
                     track_count += 1
-                    logging.info(f"Added closest match: {item['artists'][0]['name']} - {item['name']} ({item['album']['name']})")
-                    found = True
-                    break
+                    logging.info(f"Found match with score {highest_score}: {spotify_artist} - {spotify_name}")
+                else:
+                    logging.warning(f"No suitable match found for: {artist} - {name}")
+            except Exception as e:
+                logging.error(f"Error searching for track on Spotify: {e}", exc_info=True)
+                continue
 
-    # Ensure we only have 100 tracks
-    spotify_track_ids = spotify_track_ids[:100]
+        # Ensure we only have the desired number of tracks
+        spotify_track_ids = spotify_track_ids[:track_limit]
 
-    # Get or create playlist
-    playlist_id = get_or_create_playlist(sp, PLAYLIST_NAME)
+        # Get or create playlist
+        playlist_id = get_or_create_playlist(sp, playlist_name)
 
-    # Update playlist with randomized order
-    update_playlist(sp, playlist_id, spotify_track_ids)
+        # Update playlist with randomized order
+        update_playlist(sp, playlist_id, spotify_track_ids)
 
-    logging.info(f"Playlist '{PLAYLIST_NAME}' updated with {len(spotify_track_ids)} tracks in random order.")
+        logging.info(f"Playlist '{playlist_name}' updated with {len(spotify_track_ids)} tracks in random order.")
 
-    # Get the playlist link
-    playlist_info = sp.playlist(playlist_id)
-    playlist_link = playlist_info['external_urls']['spotify']
+        # Get the playlist link
+        playlist_info = sp.playlist(playlist_id)
+        playlist_link = playlist_info['external_urls']['spotify']
 
-    print(f"\nPlaylist updated successfully!")
-    print(f"You can access your playlist '{PLAYLIST_NAME}' here: {playlist_link}")
-    logging.info(f"Playlist link: {playlist_link}")
+        print(f"\nPlaylist updated successfully!")
+        print(f"You can access your playlist '{playlist_name}' here: {playlist_link}")
+        logging.info(f"Playlist link: {playlist_link}")
+
+    except Exception as e:
+        logging.error(f"An unexpected error occurred: {e}", exc_info=True)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

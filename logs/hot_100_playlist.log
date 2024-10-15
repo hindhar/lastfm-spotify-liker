@@ -1,419 +1,452 @@
-2024-10-13 17:24:22,071 - INFO - Searching for track: Charli xcx - 365 (Album: BRAT, Play count: 1411)
-2024-10-13 17:24:22,071 - INFO - User authentication requires interaction with your web browser. Once you enter your credentials and give authorization, you will be redirected to a url.  Paste that url you were directed to to complete the authorization.
-2024-10-13 17:24:22,740 - INFO - Opened https://accounts.spotify.com/authorize?client_id=b185392384fe41a58742246177d44f46&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8888%2Fcallback&scope=playlist-modify-private+playlist-modify-public in your browser
-2024-10-13 17:24:23,454 - INFO - Found exact match: Charli xcx - 365 (BRAT)
-2024-10-13 17:24:23,454 - INFO - Searching for track: Charli XCX - Apple (Album: BRAT, Play count: 1075)
-2024-10-13 17:24:23,754 - INFO - Found exact match: Charli xcx - Apple (BRAT)
-2024-10-13 17:24:23,754 - INFO - Searching for track: Fontaines D.C. - Starburster (Album: Romance, Play count: 729)
-2024-10-13 17:24:24,042 - INFO - Found exact match: Fontaines D.C. - Starburster (Romance)
-2024-10-13 17:24:24,042 - INFO - Searching for track: Fontaines D.C. - Favourite (Album: Romance, Play count: 728)
-2024-10-13 17:24:24,251 - INFO - Found exact match: Fontaines D.C. - Favourite (Romance)
-2024-10-13 17:24:24,251 - INFO - Searching for track: Charli XCX - the girl, so confusing version with lorde (Album: the girl, so confusing version with lorde, Play count: 602)
-2024-10-13 17:24:24,819 - WARNING - Could not find exact match on Spotify: Charli XCX - the girl, so confusing version with lorde (the girl, so confusing version with lorde)
-2024-10-13 17:24:25,091 - INFO - Added closest match: Charli xcx - The girl, so confusing version with lorde (GYM TIME - ALL POP UP!)
-2024-10-13 17:24:25,091 - INFO - Searching for track: Charli XCX - talk talk featuring troye sivan (Album: talk talk featuring troye sivan, Play count: 561)
-2024-10-13 17:24:25,284 - INFO - Found exact match: Charli xcx - Talk talk featuring troye sivan (Talk talk featuring troye sivan)
-2024-10-13 17:24:25,284 - INFO - Searching for track: Charli xcx - 360 (Album: BRAT, Play count: 558)
-2024-10-13 17:24:25,524 - INFO - Found exact match: Charli xcx - 360 (BRAT)
-2024-10-13 17:24:25,524 - INFO - Searching for track: Charli XCX - Von dutch (Album: BRAT, Play count: 460)
-2024-10-13 17:24:25,711 - INFO - Found exact match: Charli xcx - Von dutch (BRAT)
-2024-10-13 17:24:25,711 - INFO - Searching for track: Charli XCX - Mean girls (Album: BRAT, Play count: 458)
-2024-10-13 17:24:25,860 - INFO - Found exact match: Charli xcx - Mean girls (BRAT)
-2024-10-13 17:24:25,860 - INFO - Searching for track: Fontaines D.C. - Bug (Album: Romance, Play count: 448)
-2024-10-13 17:24:26,009 - INFO - Found exact match: Fontaines D.C. - Bug (Romance)
-2024-10-13 17:24:26,009 - INFO - Searching for track: Sabrina Carpenter - Please Please Please (Album: Please Please Please, Play count: 434)
-2024-10-13 17:24:26,162 - INFO - Found exact match: Sabrina Carpenter - Please Please Please (Please Please Please)
-2024-10-13 17:24:26,162 - INFO - Searching for track: Fontaines D.C. - Here's The Thing (Album: Romance, Play count: 393)
-2024-10-13 17:24:26,341 - INFO - Found exact match: Fontaines D.C. - Here's The Thing (Romance)
-2024-10-13 17:24:26,342 - INFO - Searching for track: Elliott Smith - St. Ides Heaven (Album: Elliott Smith, Play count: 380)
-2024-10-13 17:24:26,524 - INFO - Found exact match: Elliott Smith - St. Ides Heaven (Elliott Smith)
-2024-10-13 17:24:26,524 - INFO - Searching for track: Charli XCX - Guess (Album: Brat and it’s the same but there’s three more songs so it’s not, Play count: 360)
-2024-10-13 17:24:26,671 - INFO - Found exact match: Charli xcx - Guess (Brat and it’s the same but there’s three more songs so it’s not)
-2024-10-13 17:24:26,671 - INFO - Searching for track: Elliott Smith - Speed Trials (Album: Either/Or, Play count: 350)
-2024-10-13 17:24:26,832 - INFO - Found exact match: Elliott Smith - Speed Trials (Either/Or)
-2024-10-13 17:24:26,860 - INFO - Searching for track: Radiohead - Jigsaw Falling Into Place (Album: In Rainbows, Play count: 294)
-2024-10-13 17:24:27,116 - INFO - Found exact match: Radiohead - Jigsaw Falling Into Place (In Rainbows)
-2024-10-13 17:24:27,116 - INFO - Searching for track: Magdalena Bay - Tunnel Vision (Album: Imaginal Disk, Play count: 281)
-2024-10-13 17:24:27,301 - INFO - Found exact match: Magdalena Bay - Tunnel Vision (Imaginal Disk)
-2024-10-13 17:24:27,302 - INFO - Searching for track: Charli XCX - Sympathy is a knife (Album: BRAT, Play count: 278)
-2024-10-13 17:24:27,494 - INFO - Found exact match: Charli xcx - Sympathy is a knife (BRAT)
-2024-10-13 17:24:27,494 - INFO - Searching for track: Charli XCX - B2b (Album: BRAT, Play count: 278)
-2024-10-13 17:24:27,718 - INFO - Found exact match: Charli xcx - B2b (BRAT)
-2024-10-13 17:24:27,718 - INFO - Searching for track: Olivia Dean - Ladies Room (Album: Messy, Play count: 271)
-2024-10-13 17:24:27,968 - INFO - Found exact match: Olivia Dean - Ladies Room (Messy)
-2024-10-13 17:24:27,968 - INFO - Searching for track: Elliott Smith - Say Yes - Remastered 2017 (Album: Either/Or (Expanded Edition), Play count: 225)
-2024-10-13 17:24:28,152 - INFO - Found exact match: Elliott Smith - Say Yes - Remastered 2017 (Either/Or (Expanded Edition))
-2024-10-13 17:24:28,152 - INFO - Searching for track: Neil Young - My My, Hey Hey (Out of the Blue) - 2016 Remaster (Album: Rust Never Sleeps, Play count: 212)
-2024-10-13 17:24:28,300 - INFO - Found exact match: Neil Young - My My, Hey Hey (Out of the Blue) - 2016 Remaster (Rust Never Sleeps)
-2024-10-13 17:24:28,300 - INFO - Searching for track: MJ Lenderman - You Don't Know The Shape I'm In (Album: Manning Fireworks, Play count: 198)
-2024-10-13 17:24:28,438 - INFO - Found exact match: MJ Lenderman - You Don't Know The Shape I'm In (Manning Fireworks)
-2024-10-13 17:24:28,438 - INFO - Searching for track: Dave - Thiago Silva (Album: Thiago Silva, Play count: 197)
-2024-10-13 17:24:28,615 - INFO - Found exact match: Dave - Thiago Silva (Thiago Silva)
-2024-10-13 17:24:28,615 - INFO - Searching for track: Bo Burnham - Look Who’s Inside Again (Album: Inside, Play count: 196)
-2024-10-13 17:24:28,756 - INFO - Found exact match: Bo Burnham - Look Who’s Inside Again (INSIDE)
-2024-10-13 17:24:28,756 - INFO - Searching for track: The Last Dinner Party - Nothing Matters (Album: Prelude to Ecstasy, Play count: 194)
-2024-10-13 17:24:28,948 - INFO - Found exact match: The Last Dinner Party - Nothing Matters (Prelude to Ecstasy)
-2024-10-13 17:24:28,949 - INFO - Searching for track: Charli XCX - Talk talk (Album: BRAT, Play count: 179)
-2024-10-13 17:24:29,161 - INFO - Found exact match: Charli xcx - Talk talk (BRAT)
-2024-10-13 17:24:29,161 - INFO - Searching for track: Elliott Smith - Needle in the Hay (Album: Elliott Smith, Play count: 169)
-2024-10-13 17:24:29,372 - INFO - Found exact match: Elliott Smith - Needle In The Hay (Elliott Smith)
-2024-10-13 17:24:29,372 - INFO - Searching for track: Charli XCX - Girl, so confusing featuring lorde (Album: Girl, so confusing featuring lorde, Play count: 168)
-2024-10-13 17:24:29,548 - INFO - Found exact match: Charli xcx - Girl, so confusing featuring lorde (Girl, so confusing featuring lorde)
-2024-10-13 17:24:29,549 - INFO - Searching for track: Chappell Roan - Red Wine Supernova (Album: The Rise and Fall of a Midwest Princess, Play count: 159)
-2024-10-13 17:24:29,713 - INFO - Found exact match: Chappell Roan - Red Wine Supernova (The Rise and Fall of a Midwest Princess)
-2024-10-13 17:24:29,713 - INFO - Searching for track: Elliott Smith - Christian Brothers (Album: Elliott Smith, Play count: 155)
-2024-10-13 17:24:29,855 - INFO - Found exact match: Elliott Smith - Christian Brothers (Elliott Smith)
-2024-10-13 17:24:29,855 - INFO - Searching for track: Magdalena Bay - She Looked Like Me! (Album: Imaginal Disk, Play count: 154)
-2024-10-13 17:24:30,013 - INFO - Found exact match: Magdalena Bay - She Looked Like Me! (Imaginal Disk)
-2024-10-13 17:24:30,013 - INFO - Searching for track: The Last Dinner Party - The Feminine Urge (Album: Prelude to Ecstasy, Play count: 152)
-2024-10-13 17:24:30,198 - INFO - Found exact match: The Last Dinner Party - The Feminine Urge (Prelude to Ecstasy)
-2024-10-13 17:24:30,198 - INFO - Searching for track: Elliott Smith - Clementine (Album: Elliott Smith, Play count: 142)
-2024-10-13 17:24:30,345 - INFO - Found exact match: Elliott Smith - Clementine (Elliott Smith)
-2024-10-13 17:24:30,346 - INFO - Searching for track: Jessie Ware - Freak Me Now (with Róisín Murphy) (Album: Freak Me Now (with Róisín Murphy), Play count: 140)
-2024-10-13 17:24:30,523 - INFO - Found exact match: Jessie Ware - Freak Me Now (with Róisín Murphy) (Freak Me Now (with Róisín Murphy))
-2024-10-13 17:24:30,524 - INFO - Searching for track: Elliott Smith - Alameda (Album: Either/Or, Play count: 140)
-2024-10-13 17:24:30,836 - INFO - Found exact match: Elliott Smith - Alameda (Either/Or)
-2024-10-13 17:24:30,836 - INFO - Searching for track: Lucy Dacus - Hot & Heavy (Album: Home Video, Play count: 127)
-2024-10-13 17:24:30,987 - INFO - Found exact match: Lucy Dacus - Hot & Heavy (Home Video)
-2024-10-13 17:24:30,987 - INFO - Searching for track: Charli XCX - Club classics (Album: BRAT, Play count: 126)
-2024-10-13 17:24:31,164 - INFO - Found exact match: Charli xcx - Club classics (BRAT)
-2024-10-13 17:24:31,164 - INFO - Searching for track: The Stone Roses - She Bangs the Drums - Remastered 2009 (Album: The Stone Roses, Play count: 126)
-2024-10-13 17:24:31,352 - INFO - Found exact match: The Stone Roses - She Bangs the Drums - Remastered 2009 (The Stone Roses)
-2024-10-13 17:24:31,352 - INFO - Searching for track: Bon Iver - S P E Y S I D E (Album: S P E Y S I D E, Play count: 126)
-2024-10-13 17:24:31,495 - INFO - Found exact match: Bon Iver - S P E Y S I D E (S P E Y S I D E)
-2024-10-13 17:24:31,495 - INFO - Searching for track: Billie Eilish - LUNCH (Album: HIT ME HARD AND SOFT, Play count: 126)
-2024-10-13 17:24:31,641 - INFO - Found exact match: Billie Eilish - LUNCH (HIT ME HARD AND SOFT)
-2024-10-13 17:24:31,641 - INFO - Searching for track: Baddiel, Skinner & The Lightning Seeds - Three Lions '98 (Album: Three Lions, Play count: 126)
-2024-10-13 17:24:32,105 - WARNING - Could not find exact match on Spotify: Baddiel, Skinner & The Lightning Seeds - Three Lions '98 (Three Lions)
-2024-10-13 17:24:32,276 - INFO - Added closest match: Baddiel, Skinner & Lightning Seeds - Three Lions 98 - Remastered (Three Lions (It's Coming Home for Christmas))
-2024-10-13 17:24:32,276 - INFO - Searching for track: Elliott Smith - Between the Bars (Album: Either/Or, Play count: 113)
-2024-10-13 17:24:32,428 - INFO - Found exact match: Elliott Smith - Between The Bars (Either/Or)
-2024-10-13 17:24:32,428 - INFO - Searching for track: Elliott Smith - Say Yes (Album: Either/Or, Play count: 113)
-2024-10-13 17:24:32,569 - INFO - Found exact match: Elliott Smith - Say Yes (Either/Or)
-2024-10-13 17:24:32,569 - INFO - Searching for track: Cat Burns - go (Album: Unknown Album, Play count: 112)
-2024-10-13 17:24:33,090 - WARNING - Could not find exact match on Spotify: Cat Burns - go (Unknown Album)
-2024-10-13 17:24:33,333 - INFO - Added closest match: Cat Burns - go - goddard. Remix (Go (Remixes))
-2024-10-13 17:24:33,333 - INFO - Searching for track: Elliott Smith - Southern Belle (Album: Elliott Smith, Play count: 112)
-2024-10-13 17:24:33,601 - INFO - Found exact match: Elliott Smith - Southern Belle (Elliott Smith)
-2024-10-13 17:24:33,601 - INFO - Searching for track: Magdalena Bay - Image (Album: Imaginal Disk, Play count: 112)
-2024-10-13 17:24:33,731 - INFO - Found exact match: Magdalena Bay - Image (Imaginal Disk)
-2024-10-13 17:24:33,732 - INFO - Searching for track: Elliott Smith - Good to Go (Album: Elliott Smith, Play count: 112)
-2024-10-13 17:24:33,908 - INFO - Found exact match: Elliott Smith - Good To Go (Elliott Smith)
-2024-10-13 17:24:33,908 - INFO - Searching for track: Magdalena Bay - True Blue Interlude (Album: Imaginal Disk, Play count: 112)
-2024-10-13 17:24:34,066 - INFO - Found exact match: Magdalena Bay - True Blue Interlude (Imaginal Disk)
-2024-10-13 17:24:34,066 - INFO - Searching for track: Elliott Smith - Ballad of Big Nothing (Album: Either/Or, Play count: 112)
-2024-10-13 17:24:34,218 - INFO - Found exact match: Elliott Smith - Ballad Of Big Nothing (Either/Or)
-2024-10-13 17:24:34,219 - INFO - Searching for track: Magdalena Bay - Fear, Sex (Album: Imaginal Disk, Play count: 112)
-2024-10-13 17:24:34,427 - INFO - Found exact match: Magdalena Bay - Fear, Sex (Imaginal Disk)
-2024-10-13 17:24:34,427 - INFO - Searching for track: Charli xcx - Rewind (Album: BRAT, Play count: 112)
-2024-10-13 17:24:34,729 - INFO - Found exact match: Charli xcx - Rewind (BRAT)
-2024-10-13 17:24:34,729 - INFO - Searching for track: Sabrina Carpenter - Espresso (Album: Please Please Please, Play count: 112)
-2024-10-13 17:24:34,890 - INFO - Found exact match: Sabrina Carpenter - Espresso (Please Please Please)
-2024-10-13 17:24:34,890 - INFO - Searching for track: Barry Can't Swim - Sunsleeper (Album: When Will We Land?, Play count: 110)
-2024-10-13 17:24:35,035 - INFO - Found exact match: Barry Can't Swim - Sunsleeper (When Will We Land?)
-2024-10-13 17:24:35,035 - INFO - Searching for track: Arcade Fire - Haiti (Album: Funeral, Play count: 109)
-2024-10-13 17:24:35,183 - INFO - Found exact match: Arcade Fire - Haiti (Funeral)
-2024-10-13 17:24:35,183 - INFO - Searching for track: Charli xcx - Spring breakers (Album: Brat and it’s the same but there’s three more songs so it’s not, Play count: 98)
-2024-10-13 17:24:35,323 - INFO - Found exact match: Charli xcx - Spring breakers (Brat and it’s the same but there’s three more songs so it’s not)
-2024-10-13 17:24:35,324 - INFO - Searching for track: Magdalena Bay - Killing Time (Album: Imaginal Disk, Play count: 98)
-2024-10-13 17:24:35,490 - INFO - Found exact match: Magdalena Bay - Killing Time (Imaginal Disk)
-2024-10-13 17:24:35,490 - INFO - Searching for track: Charli XCX - I might say something stupid (Album: BRAT, Play count: 98)
-2024-10-13 17:24:35,634 - INFO - Found exact match: Charli xcx - I might say something stupid (BRAT)
-2024-10-13 17:24:35,634 - INFO - Searching for track: The Clash - Train in Vain (Stand by Me) - Remastered (Album: London Calling (Remastered), Play count: 98)
-2024-10-13 17:24:35,777 - INFO - Found exact match: The Clash - Train in Vain (Stand by Me) - Remastered (London Calling (Remastered))
-2024-10-13 17:24:35,778 - INFO - Searching for track: The Rolling Stones - Paint It, Black (Album: Aftermath, Play count: 98)
-2024-10-13 17:24:35,905 - INFO - Found exact match: The Rolling Stones - Paint It, Black (Aftermath)
-2024-10-13 17:24:35,905 - INFO - Searching for track: Gorillaz - On Melancholy Hill (Album: Plastic Beach, Play count: 97)
-2024-10-13 17:24:36,095 - INFO - Found exact match: Gorillaz - On Melancholy Hill (Plastic Beach)
-2024-10-13 17:24:36,095 - INFO - Searching for track: The Smile - Wall of Eyes (Album: Wall of Eyes, Play count: 88)
-2024-10-13 17:24:36,294 - INFO - Found exact match: The Smile - Wall Of Eyes (Wall Of Eyes)
-2024-10-13 17:24:36,294 - INFO - Searching for track: Confidence Man - What I Like (Album: Tilt, Play count: 84)
-2024-10-13 17:24:36,425 - INFO - Found exact match: Confidence Man - What I Like (TILT)
-2024-10-13 17:24:36,425 - INFO - Searching for track: MJ Lenderman - Manning Fireworks (Album: Manning Fireworks, Play count: 84)
-2024-10-13 17:24:36,585 - INFO - Found exact match: MJ Lenderman - Manning Fireworks (Manning Fireworks)
-2024-10-13 17:24:36,586 - INFO - Searching for track: Elliott Smith - Angeles (Album: Either/Or, Play count: 84)
-2024-10-13 17:24:36,880 - INFO - Found exact match: Elliott Smith - Angeles (Either/Or)
-2024-10-13 17:24:36,880 - INFO - Searching for track: Magdalena Bay - Love Is Everywhere (Album: Imaginal Disk, Play count: 84)
-2024-10-13 17:24:37,133 - INFO - Found exact match: Magdalena Bay - Love Is Everywhere (Imaginal Disk)
-2024-10-13 17:24:37,144 - INFO - Searching for track: Magdalena Bay - That's My Floor (Album: Imaginal Disk, Play count: 84)
-2024-10-13 17:24:37,303 - INFO - Found exact match: Magdalena Bay - That's My Floor (Imaginal Disk)
-2024-10-13 17:24:37,303 - INFO - Searching for track: Magdalena Bay - Watching T.V. (Album: Imaginal Disk, Play count: 84)
-2024-10-13 17:24:37,465 - INFO - Found exact match: Magdalena Bay - Watching T.V. (Imaginal Disk)
-2024-10-13 17:24:37,465 - INFO - Searching for track: Magdalena Bay - Death & Romance (Album: Imaginal Disk, Play count: 84)
-2024-10-13 17:24:37,611 - INFO - Found exact match: Magdalena Bay - Death & Romance (Imaginal Disk)
-2024-10-13 17:24:37,612 - INFO - Searching for track: Radiohead - Let Down (Album: OK Computer, Play count: 84)
-2024-10-13 17:24:37,739 - INFO - Found exact match: Radiohead - Let Down (OK Computer)
-2024-10-13 17:24:37,739 - INFO - Searching for track: Charli xcx - I think about it all the time (Album: BRAT, Play count: 84)
-2024-10-13 17:24:38,005 - INFO - Found exact match: Charli xcx - I think about it all the time (BRAT)
-2024-10-13 17:24:38,005 - INFO - Searching for track: Charli XCX - Everything is romantic (Album: BRAT, Play count: 84)
-2024-10-13 17:24:38,268 - INFO - Found exact match: Charli xcx - Everything is romantic (BRAT)
-2024-10-13 17:24:38,268 - INFO - Searching for track: Sabrina Carpenter - Taste (Album: Short n' Sweet, Play count: 74)
-2024-10-13 17:24:38,422 - INFO - Found exact match: Sabrina Carpenter - Taste (Short n' Sweet)
-2024-10-13 17:24:38,422 - INFO - Searching for track: The Stone Roses - I Wanna Be Adored - Remastered 2009 (Album: The Stone Roses, Play count: 70)
-2024-10-13 17:24:38,568 - INFO - Found exact match: The Stone Roses - I Wanna Be Adored - Remastered 2009 (The Stone Roses)
-2024-10-13 17:24:38,568 - INFO - Searching for track: Fontaines D.C. - I Love You (Album: Skinty Fia, Play count: 70)
-2024-10-13 17:24:38,735 - INFO - Found exact match: Fontaines D.C. - I Love You (Skinty Fia)
-2024-10-13 17:24:38,735 - INFO - Searching for track: Elliott Smith - Single File (Album: Elliott Smith, Play count: 70)
-2024-10-13 17:24:38,873 - INFO - Found exact match: Elliott Smith - Single File (Elliott Smith)
-2024-10-13 17:24:38,874 - INFO - Searching for track: Magdalena Bay - Vampire In The Corner (Album: Imaginal Disk, Play count: 70)
-2024-10-13 17:24:39,130 - INFO - Found exact match: Magdalena Bay - Vampire in the Corner (Imaginal Disk)
-2024-10-13 17:24:39,131 - INFO - Searching for track: Fontaines D.C. - Jackie Down The Line (Album: Skinty Fia, Play count: 70)
-2024-10-13 17:24:39,962 - INFO - Found exact match: Fontaines D.C. - Jackie Down The Line (Skinty Fia)
-2024-10-13 17:24:39,962 - INFO - Searching for track: Fred again.. - Dermot (see yourself in my eyes) (Album: Actual Life (April 14 - December 17 2020), Play count: 57)
-2024-10-13 17:24:40,193 - INFO - Found exact match: Fred again.. - Dermot (see yourself in my eyes) (Actual Life (April 14 - December 17 2020))
-2024-10-13 17:24:40,194 - INFO - Searching for track: MJ Lenderman - Wristwatch (Album: Manning Fireworks, Play count: 56)
-2024-10-13 17:24:40,414 - INFO - Found exact match: MJ Lenderman - Wristwatch (Manning Fireworks)
-2024-10-13 17:24:40,414 - INFO - Searching for track: MJ Lenderman - Rudolph (Album: Manning Fireworks, Play count: 56)
-2024-10-13 17:24:40,546 - INFO - Found exact match: MJ Lenderman - Rudolph (Manning Fireworks)
-2024-10-13 17:24:40,546 - INFO - Searching for track: MJ Lenderman - Joker Lips (Album: Manning Fireworks, Play count: 56)
-2024-10-13 17:24:40,679 - INFO - Found exact match: MJ Lenderman - Joker Lips (Manning Fireworks)
-2024-10-13 17:24:40,680 - INFO - Searching for track: Fred again.. - Danielle (Smile On My Face) (Album: Actual Life 3 (January 1 - September 9 2022), Play count: 56)
-2024-10-13 17:24:40,865 - INFO - Found exact match: Fred again.. - Danielle (smile on my face) (Actual Life 3 (January 1 - September 9 2022))
-2024-10-13 17:24:40,866 - INFO - Searching for track: Elliott Smith - Alphabet Town (Album: Elliott Smith, Play count: 56)
-2024-10-13 17:24:41,024 - INFO - Found exact match: Elliott Smith - Alphabet Town (Elliott Smith)
-2024-10-13 17:24:41,024 - INFO - Searching for track: Elliott Smith - Coming Up Roses (Album: Elliott Smith, Play count: 56)
-2024-10-13 17:24:41,168 - INFO - Found exact match: Elliott Smith - Coming Up Roses (Elliott Smith)
-2024-10-13 17:24:41,169 - INFO - Searching for track: Elliott Smith - 2:45 AM (Album: Either/Or, Play count: 56)
-2024-10-13 17:24:41,378 - INFO - Found exact match: Elliott Smith - 2:45 AM (Either/Or)
-2024-10-13 17:24:41,378 - INFO - Searching for track: Magdalena Bay - Cry For Me (Album: Imaginal Disk, Play count: 56)
-2024-10-13 17:24:41,504 - INFO - Found exact match: Magdalena Bay - Cry for Me (Imaginal Disk)
-2024-10-13 17:24:41,504 - INFO - Searching for track: Magdalena Bay - Feeling Diskinserted? (Album: Imaginal Disk, Play count: 56)
-2024-10-13 17:24:41,641 - INFO - Found exact match: Magdalena Bay - Feeling DiskInserted? (Imaginal Disk)
-2024-10-13 17:24:41,641 - INFO - Searching for track: Charli XCX - Girl, so confusing (Album: BRAT, Play count: 56)
-2024-10-13 17:24:41,802 - INFO - Found exact match: Charli xcx - Girl, so confusing (BRAT)
-2024-10-13 17:24:41,803 - INFO - Searching for track: Ed Sheeran - Bad Habits (Album: Bad Habits, Play count: 56)
-2024-10-13 17:24:42,011 - INFO - Found exact match: Ed Sheeran - Bad Habits (feat. Bring Me The Horizon) (Bad Habits (feat. Bring Me The Horizon))
-2024-10-13 17:24:42,020 - INFO - Searching for track: LCD Soundsystem - Home (Album: This Is Happening, Play count: 56)
-2024-10-13 17:24:42,168 - INFO - Found exact match: LCD Soundsystem - Home (This Is Happening)
-2024-10-13 17:24:42,168 - INFO - Searching for track: The Stone Roses - I Am the Resurrection - Remastered 2009 (Album: The Stone Roses, Play count: 56)
-2024-10-13 17:24:42,337 - INFO - Found exact match: The Stone Roses - I Am the Resurrection - Remastered 2009 (The Stone Roses)
-2024-10-13 17:24:42,337 - INFO - Searching for track: The Stone Roses - Waterfall - Remastered 2009 (Album: The Stone Roses, Play count: 56)
-2024-10-13 17:24:42,614 - INFO - Found exact match: The Stone Roses - Waterfall - Remastered 2009 (The Stone Roses)
-2024-10-13 17:24:42,614 - INFO - Searching for track: DJ Seinfeld - Now U Do (Album: Now U Do, Play count: 46)
-2024-10-13 17:24:42,857 - INFO - Found exact match: DJ Seinfeld - Now U Do (Now U Do)
-2024-10-13 17:24:42,858 - INFO - Searching for track: Jockstrap - I Touch (Album: I<3Uqtinvu, Play count: 42)
-2024-10-13 17:24:43,048 - INFO - Found exact match: Jockstrap - I Touch (I<3UQTINVU)
-2024-10-13 17:24:43,048 - INFO - Searching for track: MJ Lenderman - Rip Torn (Album: Manning Fireworks, Play count: 42)
-2024-10-13 17:24:43,171 - INFO - Found exact match: MJ Lenderman - Rip Torn (Manning Fireworks)
-2024-10-13 17:24:43,171 - INFO - Searching for track: MJ Lenderman - She's Leaving You (Album: Manning Fireworks, Play count: 42)
-2024-10-13 17:24:43,339 - INFO - Found exact match: MJ Lenderman - She's Leaving You (Manning Fireworks)
-2024-10-13 17:24:43,339 - INFO - Searching for track: MJ Lenderman - On My Knees (Album: Manning Fireworks, Play count: 42)
-2024-10-13 17:24:43,478 - INFO - Found exact match: MJ Lenderman - On My Knees (Manning Fireworks)
-2024-10-13 17:24:43,479 - INFO - Searching for track: Young Fathers - Rice (Album: Heavy Heavy, Play count: 42)
-2024-10-13 17:24:43,638 - INFO - Found exact match: Young Fathers - Rice (Heavy Heavy)
-2024-10-13 17:24:43,638 - INFO - Searching for track: Rema - Calm Down (with Selena Gomez) (Album: Rave & Roses Ultra, Play count: 42)
-2024-10-13 17:24:43,796 - INFO - Found exact match: Rema - Calm Down (with Selena Gomez) (Rave & Roses Ultra)
-2024-10-13 17:24:44,647 - INFO - Found existing playlist by ID: Bobby's Hot 💯
-2024-10-13 17:24:44,649 - INFO - Updating playlist 5iFg7DdS2m8XV8kmQqg4SU with 100 tracks
-2024-10-13 17:24:45,101 - INFO - Playlist update completed with randomized order
-2024-10-13 17:24:45,116 - INFO - Playlist 'Bobby's Hot 💯' updated with 100 tracks in random order.
-2024-10-13 17:24:45,770 - INFO - Playlist link: https://open.spotify.com/playlist/5iFg7DdS2m8XV8kmQqg4SU
-2024-10-13 17:32:56,759 - INFO - Searching for track: Charli xcx - 365 (Album: BRAT, Play count: 85)
-2024-10-13 17:32:57,069 - INFO - Found exact match: Charli xcx - 365 (BRAT)
-2024-10-13 17:32:57,069 - INFO - Searching for track: Charli XCX - Apple (Album: BRAT, Play count: 74)
-2024-10-13 17:32:57,350 - INFO - Found exact match: Charli xcx - Apple (BRAT)
-2024-10-13 17:32:57,350 - INFO - Searching for track: Fontaines D.C. - Starburster (Album: Romance, Play count: 53)
-2024-10-13 17:32:57,489 - INFO - Found exact match: Fontaines D.C. - Starburster (Romance)
-2024-10-13 17:32:57,489 - INFO - Searching for track: Fontaines D.C. - Favourite (Album: Romance, Play count: 52)
-2024-10-13 17:32:57,630 - INFO - Found exact match: Fontaines D.C. - Favourite (Romance)
-2024-10-13 17:32:57,630 - INFO - Searching for track: Charli XCX - the girl, so confusing version with lorde (Album: the girl, so confusing version with lorde, Play count: 43)
-2024-10-13 17:32:58,040 - WARNING - Could not find exact match on Spotify: Charli XCX - the girl, so confusing version with lorde (the girl, so confusing version with lorde)
-2024-10-13 17:32:58,250 - INFO - Added closest match: Charli xcx - The girl, so confusing version with lorde (GYM TIME - ALL POP UP!)
-2024-10-13 17:32:58,250 - INFO - Searching for track: Charli XCX - talk talk featuring troye sivan (Album: talk talk featuring troye sivan, Play count: 41)
-2024-10-13 17:32:58,428 - INFO - Found exact match: Charli xcx - Talk talk featuring troye sivan (Talk talk featuring troye sivan)
-2024-10-13 17:32:58,428 - INFO - Searching for track: Charli xcx - 360 (Album: BRAT, Play count: 38)
-2024-10-13 17:32:58,572 - INFO - Found exact match: Charli xcx - 360 (BRAT)
-2024-10-13 17:32:58,572 - INFO - Searching for track: Charli XCX - Mean girls (Album: BRAT, Play count: 33)
-2024-10-13 17:32:58,745 - INFO - Found exact match: Charli xcx - Mean girls (BRAT)
-2024-10-13 17:32:58,745 - INFO - Searching for track: Fontaines D.C. - Bug (Album: Romance, Play count: 32)
-2024-10-13 17:32:58,879 - INFO - Found exact match: Fontaines D.C. - Bug (Romance)
-2024-10-13 17:32:58,880 - INFO - Searching for track: Sabrina Carpenter - Please Please Please (Album: Please Please Please, Play count: 31)
-2024-10-13 17:32:59,051 - INFO - Found exact match: Sabrina Carpenter - Please Please Please (Please Please Please)
-2024-10-13 17:32:59,051 - INFO - Searching for track: Charli XCX - Von dutch (Album: BRAT, Play count: 31)
-2024-10-13 17:32:59,236 - INFO - Found exact match: Charli xcx - Von dutch (BRAT)
-2024-10-13 17:32:59,236 - INFO - Searching for track: Elliott Smith - St. Ides Heaven (Album: Elliott Smith, Play count: 29)
-2024-10-13 17:32:59,447 - INFO - Found exact match: Elliott Smith - St. Ides Heaven (Elliott Smith)
-2024-10-13 17:32:59,447 - INFO - Searching for track: Fontaines D.C. - Here's The Thing (Album: Romance, Play count: 29)
-2024-10-13 17:32:59,590 - INFO - Found exact match: Fontaines D.C. - Here's The Thing (Romance)
-2024-10-13 17:32:59,590 - INFO - Searching for track: Elliott Smith - Speed Trials (Album: Either/Or, Play count: 25)
-2024-10-13 17:32:59,717 - INFO - Found exact match: Elliott Smith - Speed Trials (Either/Or)
-2024-10-13 17:32:59,717 - INFO - Searching for track: Charli XCX - Guess (Album: Brat and it’s the same but there’s three more songs so it’s not, Play count: 22)
-2024-10-13 17:32:59,874 - INFO - Found exact match: Charli xcx - Guess (Brat and it’s the same but there’s three more songs so it’s not)
-2024-10-13 17:32:59,875 - INFO - Searching for track: MJ Lenderman - You Don't Know The Shape I'm In (Album: Manning Fireworks, Play count: 21)
-2024-10-13 17:33:00,216 - INFO - Found exact match: MJ Lenderman - You Don't Know The Shape I'm In (Manning Fireworks)
-2024-10-13 17:33:00,216 - INFO - Searching for track: Magdalena Bay - Tunnel Vision (Album: Imaginal Disk, Play count: 21)
-2024-10-13 17:33:00,386 - INFO - Found exact match: Magdalena Bay - Tunnel Vision (Imaginal Disk)
-2024-10-13 17:33:00,386 - INFO - Searching for track: Radiohead - Jigsaw Falling Into Place (Album: In Rainbows, Play count: 21)
-2024-10-13 17:33:00,616 - INFO - Found exact match: Radiohead - Jigsaw Falling Into Place (In Rainbows)
-2024-10-13 17:33:00,616 - INFO - Searching for track: Olivia Dean - Ladies Room (Album: Messy, Play count: 20)
-2024-10-13 17:33:00,814 - INFO - Found exact match: Olivia Dean - Ladies Room (Messy)
-2024-10-13 17:33:00,814 - INFO - Searching for track: Charli XCX - Sympathy is a knife (Album: BRAT, Play count: 18)
-2024-10-13 17:33:00,997 - INFO - Found exact match: Charli xcx - Sympathy is a knife (BRAT)
-2024-10-13 17:33:00,997 - INFO - Searching for track: Charli XCX - B2b (Album: BRAT, Play count: 18)
-2024-10-13 17:33:01,225 - INFO - Found exact match: Charli xcx - B2b (BRAT)
-2024-10-13 17:33:01,225 - INFO - Searching for track: Neil Young - My My, Hey Hey (Out of the Blue) - 2016 Remaster (Album: Rust Never Sleeps, Play count: 17)
-2024-10-13 17:33:01,362 - INFO - Found exact match: Neil Young - My My, Hey Hey (Out of the Blue) - 2016 Remaster (Rust Never Sleeps)
-2024-10-13 17:33:01,363 - INFO - Searching for track: Elliott Smith - Say Yes - Remastered 2017 (Album: Either/Or (Expanded Edition), Play count: 17)
-2024-10-13 17:33:01,560 - INFO - Found exact match: Elliott Smith - Say Yes - Remastered 2017 (Either/Or (Expanded Edition))
-2024-10-13 17:33:01,560 - INFO - Searching for track: Dave - Thiago Silva (Album: Thiago Silva, Play count: 15)
-2024-10-13 17:33:01,750 - INFO - Found exact match: Dave - Thiago Silva (Thiago Silva)
-2024-10-13 17:33:01,750 - INFO - Searching for track: Sabrina Carpenter - Taste (Album: Short n' Sweet, Play count: 14)
-2024-10-13 17:33:01,893 - INFO - Found exact match: Sabrina Carpenter - Taste (Short n' Sweet)
-2024-10-13 17:33:01,893 - INFO - Searching for track: Bo Burnham - Look Who’s Inside Again (Album: Inside, Play count: 14)
-2024-10-13 17:33:02,096 - INFO - Found exact match: Bo Burnham - Look Who’s Inside Again (INSIDE)
-2024-10-13 17:33:02,096 - INFO - Searching for track: Elliott Smith - Needle in the Hay (Album: Elliott Smith, Play count: 13)
-2024-10-13 17:33:02,252 - INFO - Found exact match: Elliott Smith - Needle In The Hay (Elliott Smith)
-2024-10-13 17:33:02,252 - INFO - Searching for track: Elliott Smith - Clementine (Album: Elliott Smith, Play count: 12)
-2024-10-13 17:33:02,383 - INFO - Found exact match: Elliott Smith - Clementine (Elliott Smith)
-2024-10-13 17:33:02,383 - INFO - Searching for track: Elliott Smith - Christian Brothers (Album: Elliott Smith, Play count: 12)
-2024-10-13 17:33:02,529 - INFO - Found exact match: Elliott Smith - Christian Brothers (Elliott Smith)
-2024-10-13 17:33:02,529 - INFO - Searching for track: Chappell Roan - Red Wine Supernova (Album: The Rise and Fall of a Midwest Princess, Play count: 12)
-2024-10-13 17:33:02,692 - INFO - Found exact match: Chappell Roan - Red Wine Supernova (The Rise and Fall of a Midwest Princess)
-2024-10-13 17:33:02,692 - INFO - Searching for track: The Last Dinner Party - Nothing Matters (Album: Prelude to Ecstasy, Play count: 12)
-2024-10-13 17:33:02,838 - INFO - Found exact match: The Last Dinner Party - Nothing Matters (Prelude to Ecstasy)
-2024-10-13 17:33:02,838 - INFO - Searching for track: Charli XCX - Girl, so confusing featuring lorde (Album: Girl, so confusing featuring lorde, Play count: 12)
-2024-10-13 17:33:02,978 - INFO - Found exact match: Charli xcx - Girl, so confusing featuring lorde (Girl, so confusing featuring lorde)
-2024-10-13 17:33:02,978 - INFO - Searching for track: Magdalena Bay - She Looked Like Me! (Album: Imaginal Disk, Play count: 11)
-2024-10-13 17:33:03,103 - INFO - Found exact match: Magdalena Bay - She Looked Like Me! (Imaginal Disk)
-2024-10-13 17:33:03,103 - INFO - Searching for track: Charli XCX - Talk talk (Album: BRAT, Play count: 11)
-2024-10-13 17:33:03,243 - INFO - Found exact match: Charli xcx - Talk talk (BRAT)
-2024-10-13 17:33:03,243 - INFO - Searching for track: Lucy Dacus - Hot & Heavy (Album: Home Video, Play count: 10)
-2024-10-13 17:33:03,412 - INFO - Found exact match: Lucy Dacus - Hot & Heavy (Home Video)
-2024-10-13 17:33:03,412 - INFO - Searching for track: Jessie Ware - Freak Me Now (with Róisín Murphy) (Album: Freak Me Now (with Róisín Murphy), Play count: 10)
-2024-10-13 17:33:03,545 - INFO - Found exact match: Jessie Ware - Freak Me Now (with Róisín Murphy) (Freak Me Now (with Róisín Murphy))
-2024-10-13 17:33:03,545 - INFO - Searching for track: Elliott Smith - Alameda (Album: Either/Or, Play count: 10)
-2024-10-13 17:33:03,685 - INFO - Found exact match: Elliott Smith - Alameda (Either/Or)
-2024-10-13 17:33:03,685 - INFO - Searching for track: Charli XCX - Club classics (Album: BRAT, Play count: 9)
-2024-10-13 17:33:03,866 - INFO - Found exact match: Charli xcx - Club classics (BRAT)
-2024-10-13 17:33:03,866 - INFO - Searching for track: Elliott Smith - Between the Bars (Album: Either/Or, Play count: 9)
-2024-10-13 17:33:04,061 - INFO - Found exact match: Elliott Smith - Between The Bars (Either/Or)
-2024-10-13 17:33:04,061 - INFO - Searching for track: Elliott Smith - Say Yes (Album: Either/Or, Play count: 9)
-2024-10-13 17:33:04,241 - INFO - Found exact match: Elliott Smith - Say Yes (Either/Or)
-2024-10-13 17:33:04,241 - INFO - Searching for track: The Stone Roses - She Bangs the Drums - Remastered 2009 (Album: The Stone Roses, Play count: 9)
-2024-10-13 17:33:04,423 - INFO - Found exact match: The Stone Roses - She Bangs the Drums - Remastered 2009 (The Stone Roses)
-2024-10-13 17:33:04,423 - INFO - Searching for track: Bon Iver - S P E Y S I D E (Album: S P E Y S I D E, Play count: 9)
-2024-10-13 17:33:04,551 - INFO - Found exact match: Bon Iver - S P E Y S I D E (S P E Y S I D E)
-2024-10-13 17:33:04,551 - INFO - Searching for track: Billie Eilish - LUNCH (Album: HIT ME HARD AND SOFT, Play count: 9)
-2024-10-13 17:33:04,822 - INFO - Found exact match: Billie Eilish - LUNCH (HIT ME HARD AND SOFT)
-2024-10-13 17:33:04,822 - INFO - Searching for track: The Last Dinner Party - The Feminine Urge (Album: Prelude to Ecstasy, Play count: 9)
-2024-10-13 17:33:04,968 - INFO - Found exact match: The Last Dinner Party - The Feminine Urge (Prelude to Ecstasy)
-2024-10-13 17:33:04,968 - INFO - Searching for track: Baddiel, Skinner & The Lightning Seeds - Three Lions '98 (Album: Three Lions, Play count: 9)
-2024-10-13 17:33:05,502 - WARNING - Could not find exact match on Spotify: Baddiel, Skinner & The Lightning Seeds - Three Lions '98 (Three Lions)
-2024-10-13 17:33:05,625 - INFO - Added closest match: Baddiel, Skinner & Lightning Seeds - Three Lions 98 - Remastered (Three Lions (It's Coming Home for Christmas))
-2024-10-13 17:33:05,625 - INFO - Searching for track: Beyoncé - AMEN (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:05,795 - INFO - Found exact match: Beyoncé - AMEN (COWBOY CARTER)
-2024-10-13 17:33:05,795 - INFO - Searching for track: Beyoncé - SWEET ★ HONEY ★ BUCKIIN' (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:05,969 - INFO - Found exact match: Beyoncé - SWEET ★ HONEY ★ BUCKIIN' (COWBOY CARTER)
-2024-10-13 17:33:05,969 - INFO - Searching for track: Beyoncé - TYRANT (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:06,104 - INFO - Found exact match: Beyoncé - TYRANT (COWBOY CARTER)
-2024-10-13 17:33:06,104 - INFO - Searching for track: Beyoncé - II HANDS II HEAVEN (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:06,243 - INFO - Found exact match: Beyoncé - II HANDS II HEAVEN (COWBOY CARTER)
-2024-10-13 17:33:06,243 - INFO - Searching for track: Beyoncé - RIIVERDANCE (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:06,415 - INFO - Found exact match: Beyoncé - RIIVERDANCE (COWBOY CARTER)
-2024-10-13 17:33:06,416 - INFO - Searching for track: Beyoncé - DESERT EAGLE (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:06,569 - INFO - Found exact match: Beyoncé - DESERT EAGLE (COWBOY CARTER)
-2024-10-13 17:33:06,570 - INFO - Searching for track: Beyoncé - OH LOUISIANA (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:06,693 - INFO - Found exact match: Beyoncé - OH LOUISIANA (COWBOY CARTER)
-2024-10-13 17:33:06,693 - INFO - Searching for track: Beyoncé - YA YA (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:06,841 - INFO - Found exact match: Beyoncé - YA YA (COWBOY CARTER)
-2024-10-13 17:33:06,841 - INFO - Searching for track: Beyoncé - THE LINDA MARTELL SHOW (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:06,995 - INFO - Found exact match: Beyoncé - THE LINDA MARTELL SHOW (COWBOY CARTER)
-2024-10-13 17:33:06,996 - INFO - Searching for track: Beyoncé - FLAMENCO (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:07,135 - INFO - Found exact match: Beyoncé - FLAMENCO (COWBOY CARTER)
-2024-10-13 17:33:07,135 - INFO - Searching for track: Beyoncé - LEVII'S JEANS (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:07,282 - INFO - Found exact match: Beyoncé - LEVII'S JEANS (COWBOY CARTER)
-2024-10-13 17:33:07,282 - INFO - Searching for track: Beyoncé - II MOST WANTED (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:07,444 - INFO - Found exact match: Beyoncé - II MOST WANTED (COWBOY CARTER)
-2024-10-13 17:33:07,444 - INFO - Searching for track: Beyoncé - JUST FOR FUN (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:07,577 - INFO - Found exact match: Beyoncé - JUST FOR FUN (COWBOY CARTER)
-2024-10-13 17:33:07,577 - INFO - Searching for track: Beyoncé - SMOKE HOUR II (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:07,783 - INFO - Found exact match: Beyoncé - SMOKE HOUR II (COWBOY CARTER)
-2024-10-13 17:33:07,784 - INFO - Searching for track: Beyoncé - ALLIIGATOR TEARS (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:07,924 - INFO - Found exact match: Beyoncé - ALLIIGATOR TEARS (COWBOY CARTER)
-2024-10-13 17:33:07,924 - INFO - Searching for track: Beyoncé - SPAGHETTII (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:08,153 - INFO - Found exact match: Beyoncé - SPAGHETTII (COWBOY CARTER)
-2024-10-13 17:33:08,153 - INFO - Searching for track: Beyoncé - DAUGHTER (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:08,315 - INFO - Found exact match: Beyoncé - DAUGHTER (COWBOY CARTER)
-2024-10-13 17:33:08,315 - INFO - Searching for track: Beyoncé - JOLENE (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:08,490 - INFO - Found exact match: Beyoncé - JOLENE (COWBOY CARTER)
-2024-10-13 17:33:08,490 - INFO - Searching for track: Beyoncé - DOLLY P (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:08,637 - INFO - Found exact match: Beyoncé - DOLLY P (COWBOY CARTER)
-2024-10-13 17:33:08,637 - INFO - Searching for track: Beyoncé - BODYGUARD (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:08,763 - INFO - Found exact match: Beyoncé - BODYGUARD (COWBOY CARTER)
-2024-10-13 17:33:08,780 - INFO - Searching for track: Beyoncé - TEXAS HOLD 'EM (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:08,946 - INFO - Found exact match: Beyoncé - TEXAS HOLD 'EM (COWBOY CARTER)
-2024-10-13 17:33:08,946 - INFO - Searching for track: Beyoncé - SMOKE HOUR ★ WILLIE NELSON (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:09,094 - INFO - Found exact match: Beyoncé - SMOKE HOUR ★ WILLIE NELSON (COWBOY CARTER)
-2024-10-13 17:33:09,094 - INFO - Searching for track: Beyoncé - MY ROSE (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:09,432 - INFO - Found exact match: Beyoncé - MY ROSE (COWBOY CARTER)
-2024-10-13 17:33:09,432 - INFO - Searching for track: Beyoncé - PROTECTOR (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:09,574 - INFO - Found exact match: Beyoncé - PROTECTOR (COWBOY CARTER)
-2024-10-13 17:33:09,574 - INFO - Searching for track: Beyoncé - 16 CARRIAGES (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:09,740 - INFO - Found exact match: Beyoncé - 16 CARRIAGES (COWBOY CARTER)
-2024-10-13 17:33:09,740 - INFO - Searching for track: Beyoncé - BLACKBIIRD (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:09,905 - INFO - Found exact match: Beyoncé - BLACKBIIRD (COWBOY CARTER)
-2024-10-13 17:33:09,906 - INFO - Searching for track: Beyoncé - AMERIICAN REQUIEM (Album: COWBOY CARTER, Play count: 8)
-2024-10-13 17:33:10,047 - INFO - Found exact match: Beyoncé - AMERIICAN REQUIEM (COWBOY CARTER)
-2024-10-13 17:33:10,047 - INFO - Searching for track: Cat Burns - go (Album: Unknown Album, Play count: 8)
-2024-10-13 17:33:10,474 - WARNING - Could not find exact match on Spotify: Cat Burns - go (Unknown Album)
-2024-10-13 17:33:10,733 - INFO - Added closest match: Cat Burns - go - goddard. Remix (Go (Remixes))
-2024-10-13 17:33:10,733 - INFO - Searching for track: Elliott Smith - Southern Belle (Album: Elliott Smith, Play count: 8)
-2024-10-13 17:33:10,897 - INFO - Found exact match: Elliott Smith - Southern Belle (Elliott Smith)
-2024-10-13 17:33:10,897 - INFO - Searching for track: Magdalena Bay - Image (Album: Imaginal Disk, Play count: 8)
-2024-10-13 17:33:11,099 - INFO - Found exact match: Magdalena Bay - Image (Imaginal Disk)
-2024-10-13 17:33:11,099 - INFO - Searching for track: Elliott Smith - Good to Go (Album: Elliott Smith, Play count: 8)
-2024-10-13 17:33:11,257 - INFO - Found exact match: Elliott Smith - Good To Go (Elliott Smith)
-2024-10-13 17:33:11,257 - INFO - Searching for track: Magdalena Bay - True Blue Interlude (Album: Imaginal Disk, Play count: 8)
-2024-10-13 17:33:11,458 - INFO - Found exact match: Magdalena Bay - True Blue Interlude (Imaginal Disk)
-2024-10-13 17:33:11,458 - INFO - Searching for track: Elliott Smith - Ballad of Big Nothing (Album: Either/Or, Play count: 8)
-2024-10-13 17:33:11,607 - INFO - Found exact match: Elliott Smith - Ballad Of Big Nothing (Either/Or)
-2024-10-13 17:33:11,607 - INFO - Searching for track: Magdalena Bay - Fear, Sex (Album: Imaginal Disk, Play count: 8)
-2024-10-13 17:33:11,722 - INFO - Found exact match: Magdalena Bay - Fear, Sex (Imaginal Disk)
-2024-10-13 17:33:11,723 - INFO - Searching for track: Charli xcx - Rewind (Album: BRAT, Play count: 8)
-2024-10-13 17:33:11,921 - INFO - Found exact match: Charli xcx - Rewind (BRAT)
-2024-10-13 17:33:11,921 - INFO - Searching for track: Sabrina Carpenter - Espresso (Album: Please Please Please, Play count: 8)
-2024-10-13 17:33:12,066 - INFO - Found exact match: Sabrina Carpenter - Espresso (Please Please Please)
-2024-10-13 17:33:12,066 - INFO - Searching for track: The Smile - Wall of Eyes (Album: Wall of Eyes, Play count: 7)
-2024-10-13 17:33:12,241 - INFO - Found exact match: The Smile - Wall Of Eyes (Wall Of Eyes)
-2024-10-13 17:33:12,241 - INFO - Searching for track: Charli xcx - Spring breakers (Album: Brat and it’s the same but there’s three more songs so it’s not, Play count: 7)
-2024-10-13 17:33:12,479 - INFO - Found exact match: Charli xcx - Spring breakers (Brat and it’s the same but there’s three more songs so it’s not)
-2024-10-13 17:33:12,479 - INFO - Searching for track: Magdalena Bay - Killing Time (Album: Imaginal Disk, Play count: 7)
-2024-10-13 17:33:12,616 - INFO - Found exact match: Magdalena Bay - Killing Time (Imaginal Disk)
-2024-10-13 17:33:12,616 - INFO - Searching for track: Charli XCX - I might say something stupid (Album: BRAT, Play count: 7)
-2024-10-13 17:33:12,846 - INFO - Found exact match: Charli xcx - I might say something stupid (BRAT)
-2024-10-13 17:33:12,846 - INFO - Searching for track: The Clash - Train in Vain (Stand by Me) - Remastered (Album: London Calling (Remastered), Play count: 7)
-2024-10-13 17:33:13,004 - INFO - Found exact match: The Clash - Train in Vain (Stand by Me) - Remastered (London Calling (Remastered))
-2024-10-13 17:33:13,004 - INFO - Searching for track: The Rolling Stones - Paint It, Black (Album: Aftermath, Play count: 7)
-2024-10-13 17:33:13,132 - INFO - Found exact match: The Rolling Stones - Paint It, Black (Aftermath)
-2024-10-13 17:33:13,132 - INFO - Searching for track: Sabrina Carpenter - Good Graces (Album: Unknown Album, Play count: 6)
-2024-10-13 17:33:13,592 - WARNING - Could not find exact match on Spotify: Sabrina Carpenter - Good Graces (Unknown Album)
-2024-10-13 17:33:13,864 - INFO - Added closest match: Sabrina Carpenter - Good Graces (Short n' Sweet)
-2024-10-13 17:33:13,864 - INFO - Searching for track: Confidence Man - What I Like (Album: Tilt, Play count: 6)
-2024-10-13 17:33:14,046 - INFO - Found exact match: Confidence Man - What I Like (TILT)
-2024-10-13 17:33:14,046 - INFO - Searching for track: MJ Lenderman - Manning Fireworks (Album: Manning Fireworks, Play count: 6)
-2024-10-13 17:33:14,179 - INFO - Found exact match: MJ Lenderman - Manning Fireworks (Manning Fireworks)
-2024-10-13 17:33:14,179 - INFO - Searching for track: Elliott Smith - Angeles (Album: Either/Or, Play count: 6)
-2024-10-13 17:33:14,352 - INFO - Found exact match: Elliott Smith - Angeles (Either/Or)
-2024-10-13 17:33:14,352 - INFO - Searching for track: Magdalena Bay - Love Is Everywhere (Album: Imaginal Disk, Play count: 6)
-2024-10-13 17:33:14,480 - INFO - Found exact match: Magdalena Bay - Love Is Everywhere (Imaginal Disk)
-2024-10-13 17:33:14,480 - INFO - Searching for track: Magdalena Bay - That's My Floor (Album: Imaginal Disk, Play count: 6)
-2024-10-13 17:33:14,599 - INFO - Found exact match: Magdalena Bay - That's My Floor (Imaginal Disk)
-2024-10-13 17:33:14,599 - INFO - Searching for track: Magdalena Bay - Watching T.V. (Album: Imaginal Disk, Play count: 6)
-2024-10-13 17:33:14,748 - INFO - Found exact match: Magdalena Bay - Watching T.V. (Imaginal Disk)
-2024-10-13 17:33:14,748 - INFO - Searching for track: Magdalena Bay - Death & Romance (Album: Imaginal Disk, Play count: 6)
-2024-10-13 17:33:14,923 - INFO - Found exact match: Magdalena Bay - Death & Romance (Imaginal Disk)
-2024-10-13 17:33:14,923 - INFO - Searching for track: Gorillaz - On Melancholy Hill (Album: Plastic Beach, Play count: 6)
-2024-10-13 17:33:15,113 - INFO - Found exact match: Gorillaz - On Melancholy Hill (Plastic Beach)
-2024-10-13 17:33:15,113 - INFO - Searching for track: Barry Can't Swim - Sunsleeper (Album: When Will We Land?, Play count: 6)
-2024-10-13 17:33:15,303 - INFO - Found exact match: Barry Can't Swim - Sunsleeper (When Will We Land?)
-2024-10-13 17:33:15,304 - INFO - Searching for track: Radiohead - Let Down (Album: OK Computer, Play count: 6)
-2024-10-13 17:33:15,453 - INFO - Found exact match: Radiohead - Let Down (OK Computer)
-2024-10-13 17:33:15,453 - INFO - Searching for track: Charli xcx - I think about it all the time (Album: BRAT, Play count: 6)
-2024-10-13 17:33:15,627 - INFO - Found exact match: Charli xcx - I think about it all the time (BRAT)
-2024-10-13 17:33:15,627 - INFO - Searching for track: Charli XCX - Everything is romantic (Album: BRAT, Play count: 6)
-2024-10-13 17:33:15,764 - INFO - Found exact match: Charli xcx - Everything is romantic (BRAT)
-2024-10-13 17:33:16,385 - INFO - Found existing playlist by ID: Bobby's Hot 💯
-2024-10-13 17:33:16,386 - INFO - Updating playlist 5iFg7DdS2m8XV8kmQqg4SU with 100 tracks
-2024-10-13 17:33:16,636 - INFO - Playlist update completed with randomized order
-2024-10-13 17:33:16,636 - INFO - Playlist 'Bobby's Hot 💯' updated with 100 tracks in random order.
-2024-10-13 17:33:17,243 - INFO - Playlist link: https://open.spotify.com/playlist/5iFg7DdS2m8XV8kmQqg4SU
+2024-10-15 12:49:59,259 - INFO - Initialized tracks table in Last.fm 100 Days database.
+2024-10-15 12:49:59,259 - INFO - Starting to fetch tracks from Last.fm...
+2024-10-15 12:49:59,910 - INFO - Fetched page 1 of 10 (200 tracks)
+2024-10-15 12:50:00,640 - INFO - Fetched page 2 of 10 (200 tracks)
+2024-10-15 12:50:01,828 - INFO - Fetched page 3 of 10 (200 tracks)
+2024-10-15 12:50:02,806 - INFO - Fetched page 4 of 10 (200 tracks)
+2024-10-15 12:50:03,501 - INFO - Fetched page 5 of 10 (200 tracks)
+2024-10-15 12:50:04,119 - INFO - Fetched page 6 of 10 (200 tracks)
+2024-10-15 12:50:04,892 - INFO - Fetched page 7 of 10 (200 tracks)
+2024-10-15 12:50:05,555 - INFO - Fetched page 8 of 10 (200 tracks)
+2024-10-15 12:50:06,163 - INFO - Fetched page 9 of 10 (200 tracks)
+2024-10-15 12:50:06,680 - INFO - Fetched page 10 of 10 (74 tracks)
+2024-10-15 12:50:06,681 - INFO - Fetched a total of 1874 tracks from Last.fm
+2024-10-15 12:50:06,681 - INFO - Processing Last.fm tracks...
+2024-10-15 12:50:06,691 - INFO - Processed 459 unique tracks.
+2024-10-15 12:50:06,698 - INFO - Updated database with 459 tracks.
+2024-10-15 12:50:06,699 - INFO - Removed 0 tracks older than 2024-07-07T11:49:59.259524+00:00.
+2024-10-15 12:50:06,701 - INFO - Retrieved 459 tracks from the database.
+2024-10-15 12:50:06,708 - INFO - Searching for track: Charli xcx - 365 (Album: BRAT, Play count: 77)
+2024-10-15 12:50:06,709 - INFO - User authentication requires interaction with your web browser. Once you enter your credentials and give authorization, you will be redirected to a url.  Paste that url you were directed to to complete the authorization.
+2024-10-15 12:50:07,318 - INFO - Opened https://accounts.spotify.com/authorize?client_id=b185392384fe41a58742246177d44f46&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8888%2Fcallback&scope=playlist-modify-private+playlist-modify-public in your browser
+2024-10-15 12:50:08,092 - INFO - Found match with score 100.0: Charli xcx - 365
+2024-10-15 12:50:08,092 - INFO - Searching for track: Charli XCX - Apple (Album: BRAT, Play count: 74)
+2024-10-15 12:50:08,346 - INFO - Found match with score 100.0: Charli xcx - Apple
+2024-10-15 12:50:08,346 - INFO - Searching for track: Fontaines D.C. - Starburster (Album: Romance, Play count: 54)
+2024-10-15 12:50:08,518 - INFO - Found match with score 100.0: Fontaines D.C. - Starburster
+2024-10-15 12:50:08,518 - INFO - Searching for track: Fontaines D.C. - Favourite (Album: Romance, Play count: 53)
+2024-10-15 12:50:08,851 - INFO - Found match with score 100.0: Fontaines D.C. - Favourite
+2024-10-15 12:50:08,851 - INFO - Searching for track: Charli XCX - the girl, so confusing version with lorde (Album: the girl, so confusing version with lorde, Play count: 42)
+2024-10-15 12:50:09,071 - INFO - Found match with score 100.0: Charli xcx - The girl, so confusing version with lorde
+2024-10-15 12:50:09,071 - INFO - Searching for track: Charli XCX - talk talk featuring troye sivan (Album: talk talk featuring troye sivan, Play count: 41)
+2024-10-15 12:50:09,425 - INFO - Found match with score 100.0: Charli xcx - Talk talk featuring troye sivan
+2024-10-15 12:50:09,426 - INFO - Searching for track: Charli xcx - 360 (Album: BRAT, Play count: 38)
+2024-10-15 12:50:09,643 - INFO - Found match with score 100.0: Charli xcx - 360
+2024-10-15 12:50:09,643 - INFO - Searching for track: Fontaines D.C. - Bug (Album: Romance, Play count: 33)
+2024-10-15 12:50:09,763 - INFO - Found match with score 100.0: Fontaines D.C. - Bug
+2024-10-15 12:50:09,763 - INFO - Searching for track: Charli XCX - Mean girls (Album: BRAT, Play count: 32)
+2024-10-15 12:50:09,952 - INFO - Found match with score 100.0: Charli xcx - Mean girls
+2024-10-15 12:50:09,953 - INFO - Searching for track: Sabrina Carpenter - Please Please Please (Album: Please Please Please, Play count: 31)
+2024-10-15 12:50:10,160 - INFO - Found match with score 100.0: Sabrina Carpenter - Please Please Please
+2024-10-15 12:50:10,161 - INFO - Searching for track: Fontaines D.C. - Here's The Thing (Album: Romance, Play count: 30)
+2024-10-15 12:50:10,287 - INFO - Found match with score 100.0: Fontaines D.C. - Here's The Thing
+2024-10-15 12:50:10,287 - INFO - Searching for track: Elliott Smith - St. Ides Heaven (Album: Elliott Smith, Play count: 29)
+2024-10-15 12:50:10,432 - INFO - Found match with score 100.0: Elliott Smith - St. Ides Heaven
+2024-10-15 12:50:10,432 - INFO - Searching for track: Charli XCX - Von dutch (Album: BRAT, Play count: 28)
+2024-10-15 12:50:10,637 - INFO - Found match with score 100.0: Charli xcx - The von dutch remix with addison rae and a.g. cook
+2024-10-15 12:50:10,637 - INFO - Searching for track: Elliott Smith - Speed Trials (Album: Either/Or, Play count: 25)
+2024-10-15 12:50:10,901 - INFO - Found match with score 100.0: Elliott Smith - Speed Trials - Remastered 2017
+2024-10-15 12:50:10,901 - INFO - Searching for track: MJ Lenderman - You Don't Know The Shape I'm In (Album: Manning Fireworks, Play count: 23)
+2024-10-15 12:50:11,106 - INFO - Found match with score 100.0: MJ Lenderman - You Don't Know The Shape I'm In
+2024-10-15 12:50:11,106 - INFO - Searching for track: Radiohead - Jigsaw Falling Into Place (Album: In Rainbows, Play count: 22)
+2024-10-15 12:50:11,239 - INFO - Found match with score 100.0: Radiohead - Jigsaw Falling Into Place
+2024-10-15 12:50:11,239 - INFO - Searching for track: Olivia Dean - Ladies Room (Album: Messy, Play count: 21)
+2024-10-15 12:50:11,430 - INFO - Found match with score 100.0: Olivia Dean - Ladies Room - Live From Somerset House
+2024-10-15 12:50:11,430 - INFO - Searching for track: Magdalena Bay - Tunnel Vision (Album: Imaginal Disk, Play count: 21)
+2024-10-15 12:50:11,589 - INFO - Found match with score 100.0: Magdalena Bay - Tunnel Vision
+2024-10-15 12:50:11,589 - INFO - Searching for track: Charli XCX - Guess (Album: Brat and it’s the same but there’s three more songs so it’s not, Play count: 20)
+2024-10-15 12:50:11,782 - INFO - Found match with score 100.0: Charli xcx - Guess featuring billie eilish
+2024-10-15 12:50:11,782 - INFO - Searching for track: Sabrina Carpenter - Taste (Album: Short n' Sweet, Play count: 17)
+2024-10-15 12:50:11,908 - INFO - Found match with score 100.0: Sabrina Carpenter - Taste
+2024-10-15 12:50:11,908 - INFO - Searching for track: Neil Young - My My, Hey Hey (Out of the Blue) - 2016 Remaster (Album: Rust Never Sleeps, Play count: 17)
+2024-10-15 12:50:12,103 - INFO - Found match with score 100.0: Neil Young - My My, Hey Hey (Out of the Blue) - Live; 2016 Remaster
+2024-10-15 12:50:12,103 - INFO - Searching for track: Elliott Smith - Say Yes - Remastered 2017 (Album: Either/Or (Expanded Edition), Play count: 17)
+2024-10-15 12:50:12,319 - INFO - Found match with score 100.0: Elliott Smith - Say Yes - Remastered 2017
+2024-10-15 12:50:12,319 - INFO - Searching for track: Charli XCX - Sympathy is a knife (Album: BRAT, Play count: 17)
+2024-10-15 12:50:12,491 - INFO - Found match with score 100.0: Charli xcx - Sympathy is a knife
+2024-10-15 12:50:12,491 - INFO - Searching for track: Charli XCX - B2b (Album: BRAT, Play count: 17)
+2024-10-15 12:50:12,804 - INFO - Found match with score 100.0: Charli xcx - B2b
+2024-10-15 12:50:12,804 - INFO - Searching for track: Bo Burnham - Look Who’s Inside Again (Album: Inside, Play count: 15)
+2024-10-15 12:50:13,079 - INFO - Found match with score 100.0: Bo Burnham - Look Who’s Inside Again
+2024-10-15 12:50:13,079 - INFO - Searching for track: Dave - Thiago Silva (Album: Thiago Silva, Play count: 15)
+2024-10-15 12:50:13,219 - INFO - Found match with score 100.0: Dave - Thiago Silva
+2024-10-15 12:50:13,219 - INFO - Searching for track: Elliott Smith - Clementine (Album: Elliott Smith, Play count: 13)
+2024-10-15 12:50:13,357 - INFO - Found match with score 100.0: Elliott Smith - Clementine - 25th Anniversary Mix
+2024-10-15 12:50:13,357 - INFO - Searching for track: Elliott Smith - Needle in the Hay (Album: Elliott Smith, Play count: 13)
+2024-10-15 12:50:13,521 - INFO - Found match with score 100.0: Elliott Smith - Needle In The Hay
+2024-10-15 12:50:13,522 - INFO - Searching for track: Elliott Smith - Between the Bars (Album: Either/Or, Play count: 12)
+2024-10-15 12:50:13,701 - INFO - Found match with score 100.0: Elliott Smith - Between The Bars
+2024-10-15 12:50:13,701 - INFO - Searching for track: Elliott Smith - Christian Brothers (Album: Elliott Smith, Play count: 12)
+2024-10-15 12:50:14,033 - INFO - Found match with score 100.0: Elliott Smith - Christian Brothers
+2024-10-15 12:50:14,033 - INFO - Searching for track: Charli XCX - Girl, so confusing featuring lorde (Album: Girl, so confusing featuring lorde, Play count: 12)
+2024-10-15 12:50:14,230 - INFO - Found match with score 100.0: Charli xcx - Girl, so confusing featuring lorde
+2024-10-15 12:50:14,230 - INFO - Searching for track: The Last Dinner Party - Nothing Matters (Album: Prelude to Ecstasy, Play count: 11)
+2024-10-15 12:50:14,544 - INFO - Found match with score 100.0: The Last Dinner Party - Nothing Matters
+2024-10-15 12:50:14,544 - INFO - Searching for track: Magdalena Bay - She Looked Like Me! (Album: Imaginal Disk, Play count: 11)
+2024-10-15 12:50:14,677 - INFO - Found match with score 100.0: Magdalena Bay - She Looked Like Me!
+2024-10-15 12:50:14,677 - INFO - Searching for track: The Stone Roses - She Bangs the Drums - Remastered 2009 (Album: The Stone Roses, Play count: 10)
+2024-10-15 12:50:14,883 - INFO - Found match with score 100.0: The Stone Roses - She Bangs the Drums - Remastered 2009
+2024-10-15 12:50:14,883 - INFO - Searching for track: Lucy Dacus - Hot & Heavy (Album: Home Video, Play count: 10)
+2024-10-15 12:50:15,059 - INFO - Found match with score 100.0: Lucy Dacus - Hot & Heavy
+2024-10-15 12:50:15,059 - INFO - Searching for track: Jessie Ware - Freak Me Now (with Róisín Murphy) (Album: Freak Me Now (with Róisín Murphy), Play count: 10)
+2024-10-15 12:50:15,240 - INFO - Found match with score 100.0: Jessie Ware - Freak Me Now (with Róisín Murphy)
+2024-10-15 12:50:15,241 - INFO - Searching for track: Chappell Roan - Red Wine Supernova (Album: The Rise and Fall of a Midwest Princess, Play count: 10)
+2024-10-15 12:50:15,404 - INFO - Found match with score 100.0: Chappell Roan - Red Wine Supernova
+2024-10-15 12:50:15,405 - INFO - Searching for track: Elliott Smith - Alameda (Album: Either/Or, Play count: 10)
+2024-10-15 12:50:15,568 - INFO - Found match with score 100.0: Elliott Smith - Alameda
+2024-10-15 12:50:15,568 - INFO - Searching for track: Charli XCX - Talk talk (Album: BRAT, Play count: 10)
+2024-10-15 12:50:15,876 - INFO - Found match with score 100.0: Charli xcx - Talk talk
+2024-10-15 12:50:15,876 - INFO - Searching for track: Elliott Smith - Ballad of Big Nothing (Album: Either/Or, Play count: 9)
+2024-10-15 12:50:16,004 - INFO - Found match with score 100.0: Elliott Smith - Ballad Of Big Nothing
+2024-10-15 12:50:16,004 - INFO - Searching for track: Charli XCX - Club classics (Album: BRAT, Play count: 9)
+2024-10-15 12:50:16,204 - INFO - Found match with score 100.0: Charli xcx - Club classics
+2024-10-15 12:50:16,204 - INFO - Searching for track: Bon Iver - S P E Y S I D E (Album: S P E Y S I D E, Play count: 9)
+2024-10-15 12:50:16,366 - INFO - Found match with score 100.0: Bon Iver - S P E Y S I D E
+2024-10-15 12:50:16,366 - INFO - Searching for track: Baddiel, Skinner & The Lightning Seeds - Three Lions '98 (Album: Three Lions, Play count: 9)
+2024-10-15 12:50:16,556 - INFO - Found match with score 96.96969696969697: Baddiel, Skinner & Lightning Seeds - Three Lions '98
+2024-10-15 12:50:16,556 - INFO - Searching for track: The Smile - Wall of Eyes (Album: Wall of Eyes, Play count: 8)
+2024-10-15 12:50:16,722 - INFO - Found match with score 100.0: The Smile - Wall Of Eyes
+2024-10-15 12:50:16,722 - INFO - Searching for track: Elliott Smith - Southern Belle (Album: Elliott Smith, Play count: 8)
+2024-10-15 12:50:16,902 - INFO - Found match with score 100.0: Elliott Smith - Southern Belle
+2024-10-15 12:50:16,902 - INFO - Searching for track: Magdalena Bay - Image (Album: Imaginal Disk, Play count: 8)
+2024-10-15 12:50:17,209 - INFO - Found match with score 100.0: Magdalena Bay - Image
+2024-10-15 12:50:17,210 - INFO - Searching for track: Elliott Smith - Good to Go (Album: Elliott Smith, Play count: 8)
+2024-10-15 12:50:17,341 - INFO - Found match with score 100.0: Elliott Smith - Good To Go
+2024-10-15 12:50:17,360 - INFO - Searching for track: Magdalena Bay - True Blue Interlude (Album: Imaginal Disk, Play count: 8)
+2024-10-15 12:50:17,611 - INFO - Found match with score 100.0: Magdalena Bay - True Blue Interlude
+2024-10-15 12:50:17,611 - INFO - Searching for track: Magdalena Bay - Fear, Sex (Album: Imaginal Disk, Play count: 8)
+2024-10-15 12:50:17,749 - INFO - Found match with score 100.0: Magdalena Bay - Fear, Sex
+2024-10-15 12:50:17,749 - INFO - Searching for track: The Last Dinner Party - The Feminine Urge (Album: Prelude to Ecstasy, Play count: 8)
+2024-10-15 12:50:17,900 - INFO - Found match with score 100.0: The Last Dinner Party - The Feminine Urge
+2024-10-15 12:50:17,901 - INFO - Searching for track: Sabrina Carpenter - Espresso (Album: Please Please Please, Play count: 8)
+2024-10-15 12:50:18,234 - INFO - Found match with score 100.0: Sabrina Carpenter - Espresso
+2024-10-15 12:50:18,234 - INFO - Searching for track: Charli xcx - Rewind (Album: BRAT, Play count: 7)
+2024-10-15 12:50:18,448 - INFO - Found match with score 100.0: Charli xcx - Rewind
+2024-10-15 12:50:18,448 - INFO - Searching for track: Magdalena Bay - Love Is Everywhere (Album: Imaginal Disk, Play count: 7)
+2024-10-15 12:50:18,588 - INFO - Found match with score 100.0: Magdalena Bay - Love Is Everywhere
+2024-10-15 12:50:18,588 - INFO - Searching for track: Magdalena Bay - Killing Time (Album: Imaginal Disk, Play count: 7)
+2024-10-15 12:50:18,713 - INFO - Found match with score 100.0: Magdalena Bay - Killing Time
+2024-10-15 12:50:18,714 - INFO - Searching for track: The Clash - Train in Vain (Stand by Me) - Remastered (Album: London Calling (Remastered), Play count: 7)
+2024-10-15 12:50:18,885 - INFO - Found match with score 100.0: The Clash - Train in Vain (Stand by Me) - Remastered
+2024-10-15 12:50:18,885 - INFO - Searching for track: Billie Eilish - LUNCH (Album: HIT ME HARD AND SOFT, Play count: 7)
+2024-10-15 12:50:19,076 - INFO - Found match with score 100.0: Billie Eilish - LUNCH
+2024-10-15 12:50:19,076 - INFO - Searching for track: The Rolling Stones - Paint It, Black (Album: Aftermath, Play count: 7)
+2024-10-15 12:50:19,455 - INFO - Found match with score 100.0: The Rolling Stones - Paint It, Black
+2024-10-15 12:50:19,455 - INFO - Searching for track: Adrianne Lenker - Ruined (Album: Bright Future, Play count: 6)
+2024-10-15 12:50:19,611 - INFO - Found match with score 100.0: Adrianne Lenker - Ruined
+2024-10-15 12:50:19,611 - INFO - Searching for track: Sabrina Carpenter - Good Graces (Album: Unknown Album, Play count: 6)
+2024-10-15 12:50:19,745 - INFO - Found match with score 100.0: Sabrina Carpenter - Good Graces
+2024-10-15 12:50:19,746 - INFO - Searching for track: Confidence Man - What I Like (Album: Tilt, Play count: 6)
+2024-10-15 12:50:19,940 - INFO - Found match with score 100.0: Confidence Man - What I Like
+2024-10-15 12:50:19,940 - INFO - Searching for track: MJ Lenderman - Manning Fireworks (Album: Manning Fireworks, Play count: 6)
+2024-10-15 12:50:20,124 - INFO - Found match with score 100.0: MJ Lenderman - Manning Fireworks
+2024-10-15 12:50:20,124 - INFO - Searching for track: Elliott Smith - Angeles (Album: Either/Or, Play count: 6)
+2024-10-15 12:50:20,330 - INFO - Found match with score 100.0: Elliott Smith - Angeles
+2024-10-15 12:50:20,331 - INFO - Searching for track: Magdalena Bay - That's My Floor (Album: Imaginal Disk, Play count: 6)
+2024-10-15 12:50:20,478 - INFO - Found match with score 100.0: Magdalena Bay - That's My Floor
+2024-10-15 12:50:20,478 - INFO - Searching for track: Magdalena Bay - Watching T.V. (Album: Imaginal Disk, Play count: 6)
+2024-10-15 12:50:20,609 - INFO - Found match with score 100.0: Magdalena Bay - Watching T.V.
+2024-10-15 12:50:20,609 - INFO - Searching for track: Magdalena Bay - Death & Romance (Album: Imaginal Disk, Play count: 6)
+2024-10-15 12:50:20,758 - INFO - Found match with score 100.0: Magdalena Bay - Death & Romance
+2024-10-15 12:50:20,758 - INFO - Searching for track: Gorillaz - On Melancholy Hill (Album: Plastic Beach, Play count: 6)
+2024-10-15 12:50:20,962 - INFO - Found match with score 100.0: Gorillaz - On Melancholy Hill
+2024-10-15 12:50:20,962 - INFO - Searching for track: Charli XCX - I might say something stupid (Album: BRAT, Play count: 6)
+2024-10-15 12:50:21,146 - INFO - Found match with score 100.0: Charli xcx - I might say something stupid
+2024-10-15 12:50:21,146 - INFO - Searching for track: Barry Can't Swim - Sunsleeper (Album: When Will We Land?, Play count: 6)
+2024-10-15 12:50:21,304 - INFO - Found match with score 100.0: Barry Can't Swim - Sunsleeper
+2024-10-15 12:50:21,305 - INFO - Searching for track: Radiohead - Let Down (Album: OK Computer, Play count: 6)
+2024-10-15 12:50:21,465 - INFO - Found match with score 100.0: Radiohead - Let Down
+2024-10-15 12:50:21,466 - INFO - Searching for track: Adrianne Lenker - Cell Phone Says (Album: Bright Future, Play count: 5)
+2024-10-15 12:50:21,603 - INFO - Found match with score 100.0: Adrianne Lenker - Cell Phone Says
+2024-10-15 12:50:21,603 - INFO - Searching for track: Adrianne Lenker - Already Lost (Album: Bright Future, Play count: 5)
+2024-10-15 12:50:21,737 - INFO - Found match with score 100.0: Adrianne Lenker - Already Lost
+2024-10-15 12:50:21,737 - INFO - Searching for track: Adrianne Lenker - Donut Seam (Album: Bright Future, Play count: 5)
+2024-10-15 12:50:21,882 - INFO - Found match with score 100.0: Adrianne Lenker - Donut Seam
+2024-10-15 12:50:21,882 - INFO - Searching for track: The Stone Roses - I Am the Resurrection - Remastered 2009 (Album: The Stone Roses, Play count: 5)
+2024-10-15 12:50:22,032 - INFO - Found match with score 100.0: The Stone Roses - I Am the Resurrection - Remastered 2009
+2024-10-15 12:50:22,033 - INFO - Searching for track: MJ Lenderman - Joker Lips (Album: Manning Fireworks, Play count: 5)
+2024-10-15 12:50:22,185 - INFO - Found match with score 100.0: MJ Lenderman - Joker Lips
+2024-10-15 12:50:22,185 - INFO - Searching for track: MJ Lenderman - Rudolph (Album: Manning Fireworks, Play count: 5)
+2024-10-15 12:50:22,327 - INFO - Found match with score 100.0: MJ Lenderman - Rudolph - Live
+2024-10-15 12:50:22,327 - INFO - Searching for track: Fred again.. - Dermot (see yourself in my eyes) (Album: Actual Life (April 14 - December 17 2020), Play count: 5)
+2024-10-15 12:50:22,636 - INFO - Found match with score 100.0: Fred again.. - Dermot (see yourself in my eyes)
+2024-10-15 12:50:22,636 - INFO - Searching for track: The Stone Roses - I Wanna Be Adored - Remastered 2009 (Album: The Stone Roses, Play count: 5)
+2024-10-15 12:50:22,781 - INFO - Found match with score 100.0: The Stone Roses - I Wanna Be Adored - Remastered 2009
+2024-10-15 12:50:22,781 - INFO - Searching for track: Charli xcx - Spring breakers (Album: Brat and it’s the same but there’s three more songs so it’s not, Play count: 5)
+2024-10-15 12:50:22,957 - INFO - Found match with score 100.0: Charli xcx - Spring breakers featuring kesha
+2024-10-15 12:50:22,957 - INFO - Searching for track: Arcade Fire - Haiti (Album: Funeral, Play count: 5)
+2024-10-15 12:50:23,094 - INFO - Found match with score 100.0: Arcade Fire - Haiti
+2024-10-15 12:50:23,094 - INFO - Searching for track: Fontaines D.C. - I Love You (Album: Skinty Fia, Play count: 5)
+2024-10-15 12:50:23,272 - INFO - Found match with score 100.0: Fontaines D.C. - I Love You
+2024-10-15 12:50:23,272 - INFO - Searching for track: Elliott Smith - Single File (Album: Elliott Smith, Play count: 5)
+2024-10-15 12:50:23,415 - INFO - Found match with score 100.0: Elliott Smith - Single File
+2024-10-15 12:50:23,416 - INFO - Searching for track: Magdalena Bay - Vampire In The Corner (Album: Imaginal Disk, Play count: 5)
+2024-10-15 12:50:23,560 - INFO - Found match with score 100.0: Magdalena Bay - Vampire in the Corner
+2024-10-15 12:50:23,560 - INFO - Searching for track: Charli xcx - I think about it all the time (Album: BRAT, Play count: 5)
+2024-10-15 12:50:23,721 - INFO - Found match with score 100.0: Charli xcx - I think about it all the time
+2024-10-15 12:50:23,721 - INFO - Searching for track: Fontaines D.C. - Jackie Down The Line (Album: Skinty Fia, Play count: 5)
+2024-10-15 12:50:23,887 - INFO - Found match with score 100.0: Fontaines D.C. - Jackie Down The Line
+2024-10-15 12:50:23,887 - INFO - Searching for track: Charli xcx - 365 featuring shygirl (Album: Brat and it’s completely different but also still brat, Play count: 4)
+2024-10-15 12:50:24,072 - INFO - Found match with score 100.0: Charli xcx - 365 featuring shygirl
+2024-10-15 12:50:24,072 - INFO - Searching for track: Barry Can't Swim - Kimbara (Album: Kimbara, Play count: 4)
+2024-10-15 12:50:24,197 - INFO - Found match with score 100.0: Barry Can't Swim - Kimbara
+2024-10-15 12:50:24,197 - INFO - Searching for track: Charli xcx - Mean girls featuring julian casablancas (Album: Brat and it’s completely different but also still brat, Play count: 4)
+2024-10-15 12:50:24,389 - INFO - Found match with score 100.0: Charli xcx - Mean girls featuring julian casablancas
+2024-10-15 12:50:24,390 - INFO - Searching for track: MJ Lenderman - Wristwatch (Album: Manning Fireworks, Play count: 4)
+2024-10-15 12:50:24,543 - INFO - Found match with score 100.0: MJ Lenderman - Wristwatch
+2024-10-15 12:50:24,544 - INFO - Searching for track: Fred again.. - Danielle (Smile On My Face) (Album: Actual Life 3 (January 1 - September 9 2022), Play count: 4)
+2024-10-15 12:50:24,721 - INFO - Found match with score 100.0: Fred again.. - Danielle (Smile on My Face)
+2024-10-15 12:50:24,721 - INFO - Searching for track: Elliott Smith - Alphabet Town (Album: Elliott Smith, Play count: 4)
+2024-10-15 12:50:24,881 - INFO - Found match with score 100.0: Elliott Smith - Alphabet Town - Live At Umbra Penumbra - September 17th, 1994
+2024-10-15 12:50:24,882 - INFO - Searching for track: Elliott Smith - Coming Up Roses (Album: Elliott Smith, Play count: 4)
+2024-10-15 12:50:25,030 - INFO - Found match with score 100.0: Elliott Smith - Coming Up Roses
+2024-10-15 12:50:25,031 - INFO - Searching for track: Elliott Smith - 2:45 AM (Album: Either/Or, Play count: 4)
+2024-10-15 12:50:25,264 - INFO - Found match with score 100.0: Elliott Smith - 2:45 AM - Remastered 2017
+2024-10-15 12:50:25,264 - INFO - Searching for track: Magdalena Bay - Cry For Me (Album: Imaginal Disk, Play count: 4)
+2024-10-15 12:50:25,411 - INFO - Found match with score 100.0: Magdalena Bay - Cry for Me
+2024-10-15 12:50:25,411 - INFO - Searching for track: Magdalena Bay - Feeling Diskinserted? (Album: Imaginal Disk, Play count: 4)
+2024-10-15 12:50:25,576 - INFO - Found match with score 100.0: Magdalena Bay - Feeling DiskInserted?
+2024-10-15 12:50:25,577 - INFO - Searching for track: Charli XCX - Everything is romantic (Album: BRAT, Play count: 4)
+2024-10-15 12:50:25,786 - INFO - Found match with score 100.0: Charli xcx - Everything is romantic
+2024-10-15 12:50:25,787 - INFO - Searching for track: Ed Sheeran - Bad Habits (Album: Bad Habits, Play count: 4)
+2024-10-15 12:50:25,990 - INFO - Found match with score 100.0: Ed Sheeran - Bad Habits
+2024-10-15 12:50:25,990 - INFO - Searching for track: LCD Soundsystem - Home (Album: This Is Happening, Play count: 4)
+2024-10-15 12:50:26,202 - INFO - Found match with score 100.0: LCD Soundsystem - Home
+2024-10-15 12:50:26,202 - INFO - Searching for track: The Stone Roses - Waterfall - Remastered 2009 (Album: The Stone Roses, Play count: 4)
+2024-10-15 12:50:26,375 - INFO - Found match with score 100.0: The Stone Roses - Waterfall - Remastered 2009
+2024-10-15 12:50:26,375 - INFO - Searching for track: Jamie xx - Wanna (Album: In Waves, Play count: 3)
+2024-10-15 12:50:26,511 - INFO - Found match with score 100.0: Jamie xx - Wanna
+2024-10-15 12:50:26,511 - INFO - Searching for track: Bon Iver - 715 - CR∑∑KS (Album: 22, a Million, Play count: 3)
+2024-10-15 12:50:26,661 - INFO - Found match with score 100.0: Bon Iver - 715 - CR∑∑KS
+2024-10-15 12:50:27,451 - INFO - Found existing playlist: Bobby's Hot 💯
+2024-10-15 12:50:27,452 - INFO - Updating playlist 5iFg7DdS2m8XV8kmQqg4SU with 100 tracks
+2024-10-15 12:50:27,724 - INFO - Added 100 tracks to playlist
+2024-10-15 12:50:27,928 - INFO - Playlist update completed with randomized order
+2024-10-15 12:50:27,928 - INFO - Playlist 'Bobby's Hot 💯' updated with 100 tracks in random order.
+2024-10-15 12:50:28,685 - INFO - Playlist link: https://open.spotify.com/playlist/5iFg7DdS2m8XV8kmQqg4SU
+2024-10-15 14:54:09,626 - INFO - Initialized tracks table in Last.fm 100 Days database.
+2024-10-15 14:54:09,628 - INFO - Starting to fetch tracks from Last.fm...
+2024-10-15 14:54:10,230 - INFO - Fetched page 1 of 10 (200 tracks)
+2024-10-15 14:54:11,013 - INFO - Fetched page 2 of 10 (200 tracks)
+2024-10-15 14:54:12,218 - INFO - Fetched page 3 of 10 (200 tracks)
+2024-10-15 14:54:13,146 - INFO - Fetched page 4 of 10 (200 tracks)
+2024-10-15 14:54:16,185 - INFO - Fetched page 5 of 10 (200 tracks)
+2024-10-15 14:54:17,173 - INFO - Fetched page 6 of 10 (200 tracks)
+2024-10-15 14:54:18,436 - INFO - Fetched page 7 of 10 (200 tracks)
+2024-10-15 14:54:19,350 - INFO - Fetched page 8 of 10 (200 tracks)
+2024-10-15 14:54:20,174 - INFO - Fetched page 9 of 10 (200 tracks)
+2024-10-15 14:54:21,078 - INFO - Fetched page 10 of 10 (66 tracks)
+2024-10-15 14:54:21,079 - INFO - Fetched a total of 1866 tracks from Last.fm
+2024-10-15 14:54:21,079 - INFO - Processing Last.fm tracks...
+2024-10-15 14:54:21,093 - INFO - Processed 459 unique tracks.
+2024-10-15 14:54:21,101 - INFO - Updated database with 459 tracks.
+2024-10-15 14:54:21,102 - INFO - Removed 0 tracks older than 2024-07-07T13:54:09.627258+00:00.
+2024-10-15 14:54:21,104 - INFO - Retrieved 459 tracks from the database.
+2024-10-15 14:54:21,112 - INFO - Searching for track: Charli xcx - 365 (Album: BRAT, Play count: 77)
+2024-10-15 14:54:21,113 - INFO - User authentication requires interaction with your web browser. Once you enter your credentials and give authorization, you will be redirected to a url.  Paste that url you were directed to to complete the authorization.
+2024-10-15 14:54:21,684 - INFO - Opened https://accounts.spotify.com/authorize?client_id=b185392384fe41a58742246177d44f46&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8888%2Fcallback&scope=playlist-modify-private+playlist-modify-public in your browser
+2024-10-15 14:54:22,891 - INFO - Found match with score 100.0: Charli xcx - 365
+2024-10-15 14:54:22,925 - INFO - Searching for track: Charli XCX - Apple (Album: BRAT, Play count: 74)
+2024-10-15 14:54:23,435 - INFO - Found match with score 100.0: Charli xcx - Apple
+2024-10-15 14:54:23,436 - INFO - Searching for track: Fontaines D.C. - Starburster (Album: Romance, Play count: 54)
+2024-10-15 14:54:23,746 - INFO - Found match with score 100.0: Fontaines D.C. - Starburster
+2024-10-15 14:54:23,747 - INFO - Searching for track: Fontaines D.C. - Favourite (Album: Romance, Play count: 53)
+2024-10-15 14:54:23,944 - INFO - Found match with score 100.0: Fontaines D.C. - Favourite
+2024-10-15 14:54:23,945 - INFO - Searching for track: Charli XCX - the girl, so confusing version with lorde (Album: the girl, so confusing version with lorde, Play count: 42)
+2024-10-15 14:54:24,268 - INFO - Found match with score 100.0: Charli xcx - The girl, so confusing version with lorde
+2024-10-15 14:54:24,268 - INFO - Searching for track: Charli XCX - talk talk featuring troye sivan (Album: talk talk featuring troye sivan, Play count: 41)
+2024-10-15 14:54:24,690 - INFO - Found match with score 100.0: Charli xcx - Talk talk featuring troye sivan
+2024-10-15 14:54:24,690 - INFO - Searching for track: Charli xcx - 360 (Album: BRAT, Play count: 38)
+2024-10-15 14:54:25,053 - INFO - Found match with score 100.0: Charli xcx - 360
+2024-10-15 14:54:25,054 - INFO - Searching for track: Fontaines D.C. - Bug (Album: Romance, Play count: 33)
+2024-10-15 14:54:25,201 - INFO - Found match with score 100.0: Fontaines D.C. - Bug
+2024-10-15 14:54:25,209 - INFO - Searching for track: Charli XCX - Mean girls (Album: BRAT, Play count: 32)
+2024-10-15 14:54:25,465 - INFO - Found match with score 100.0: Charli xcx - Mean girls
+2024-10-15 14:54:25,472 - INFO - Searching for track: Sabrina Carpenter - Please Please Please (Album: Please Please Please, Play count: 31)
+2024-10-15 14:54:25,680 - INFO - Found match with score 100.0: Sabrina Carpenter - Please Please Please
+2024-10-15 14:54:25,681 - INFO - Searching for track: Fontaines D.C. - Here's The Thing (Album: Romance, Play count: 30)
+2024-10-15 14:54:25,873 - INFO - Found match with score 100.0: Fontaines D.C. - Here's The Thing
+2024-10-15 14:54:25,874 - INFO - Searching for track: Elliott Smith - St. Ides Heaven (Album: Elliott Smith, Play count: 29)
+2024-10-15 14:54:26,028 - INFO - Found match with score 100.0: Elliott Smith - St. Ides Heaven
+2024-10-15 14:54:26,028 - INFO - Searching for track: Charli XCX - Von dutch (Album: BRAT, Play count: 28)
+2024-10-15 14:54:26,234 - INFO - Found match with score 100.0: Charli xcx - The von dutch remix with addison rae and a.g. cook
+2024-10-15 14:54:26,234 - INFO - Searching for track: Elliott Smith - Speed Trials (Album: Either/Or, Play count: 25)
+2024-10-15 14:54:26,400 - INFO - Found match with score 100.0: Elliott Smith - Speed Trials - Remastered 2017
+2024-10-15 14:54:26,402 - INFO - Searching for track: MJ Lenderman - You Don't Know The Shape I'm In (Album: Manning Fireworks, Play count: 23)
+2024-10-15 14:54:26,540 - INFO - Found match with score 100.0: MJ Lenderman - You Don't Know The Shape I'm In
+2024-10-15 14:54:26,540 - INFO - Searching for track: Radiohead - Jigsaw Falling Into Place (Album: In Rainbows, Play count: 22)
+2024-10-15 14:54:26,705 - INFO - Found match with score 100.0: Radiohead - Jigsaw Falling Into Place
+2024-10-15 14:54:26,707 - INFO - Searching for track: Olivia Dean - Ladies Room (Album: Messy, Play count: 21)
+2024-10-15 14:54:26,921 - INFO - Found match with score 100.0: Olivia Dean - Ladies Room - Live From Somerset House
+2024-10-15 14:54:26,921 - INFO - Searching for track: Magdalena Bay - Tunnel Vision (Album: Imaginal Disk, Play count: 21)
+2024-10-15 14:54:27,054 - INFO - Found match with score 100.0: Magdalena Bay - Tunnel Vision
+2024-10-15 14:54:27,055 - INFO - Searching for track: Charli XCX - Guess (Album: Brat and it’s the same but there’s three more songs so it’s not, Play count: 20)
+2024-10-15 14:54:27,254 - INFO - Found match with score 100.0: Charli xcx - Guess featuring billie eilish
+2024-10-15 14:54:27,254 - INFO - Searching for track: Sabrina Carpenter - Taste (Album: Short n' Sweet, Play count: 17)
+2024-10-15 14:54:27,394 - INFO - Found match with score 100.0: Sabrina Carpenter - Taste
+2024-10-15 14:54:27,394 - INFO - Searching for track: Neil Young - My My, Hey Hey (Out of the Blue) - 2016 Remaster (Album: Rust Never Sleeps, Play count: 17)
+2024-10-15 14:54:27,528 - INFO - Found match with score 100.0: Neil Young - My My, Hey Hey (Out of the Blue) - Live; 2016 Remaster
+2024-10-15 14:54:27,528 - INFO - Searching for track: Elliott Smith - Say Yes - Remastered 2017 (Album: Either/Or (Expanded Edition), Play count: 17)
+2024-10-15 14:54:27,689 - INFO - Found match with score 100.0: Elliott Smith - Say Yes - Remastered 2017
+2024-10-15 14:54:27,689 - INFO - Searching for track: Charli XCX - Sympathy is a knife (Album: BRAT, Play count: 17)
+2024-10-15 14:54:27,940 - INFO - Found match with score 100.0: Charli xcx - Sympathy is a knife
+2024-10-15 14:54:27,942 - INFO - Searching for track: Charli XCX - B2b (Album: BRAT, Play count: 17)
+2024-10-15 14:54:28,214 - INFO - Found match with score 100.0: Charli xcx - B2b
+2024-10-15 14:54:28,214 - INFO - Searching for track: Bo Burnham - Look Who’s Inside Again (Album: Inside, Play count: 15)
+2024-10-15 14:54:28,533 - INFO - Found match with score 100.0: Bo Burnham - Look Who’s Inside Again
+2024-10-15 14:54:28,534 - INFO - Searching for track: Dave - Thiago Silva (Album: Thiago Silva, Play count: 15)
+2024-10-15 14:54:28,729 - INFO - Found match with score 100.0: Dave - Thiago Silva
+2024-10-15 14:54:28,729 - INFO - Searching for track: Elliott Smith - Clementine (Album: Elliott Smith, Play count: 13)
+2024-10-15 14:54:28,915 - INFO - Found match with score 100.0: Elliott Smith - Clementine - 25th Anniversary Mix
+2024-10-15 14:54:28,916 - INFO - Searching for track: Elliott Smith - Needle in the Hay (Album: Elliott Smith, Play count: 13)
+2024-10-15 14:54:29,145 - INFO - Found match with score 100.0: Elliott Smith - Needle In The Hay
+2024-10-15 14:54:29,145 - INFO - Searching for track: Elliott Smith - Between the Bars (Album: Either/Or, Play count: 12)
+2024-10-15 14:54:29,445 - INFO - Found match with score 100.0: Elliott Smith - Between The Bars
+2024-10-15 14:54:29,446 - INFO - Searching for track: Elliott Smith - Christian Brothers (Album: Elliott Smith, Play count: 12)
+2024-10-15 14:54:29,606 - INFO - Found match with score 100.0: Elliott Smith - Christian Brothers
+2024-10-15 14:54:29,607 - INFO - Searching for track: Charli XCX - Girl, so confusing featuring lorde (Album: Girl, so confusing featuring lorde, Play count: 12)
+2024-10-15 14:54:29,967 - INFO - Found match with score 100.0: Charli xcx - Girl, so confusing featuring lorde
+2024-10-15 14:54:29,967 - INFO - Searching for track: The Last Dinner Party - Nothing Matters (Album: Prelude to Ecstasy, Play count: 11)
+2024-10-15 14:54:30,169 - INFO - Found match with score 100.0: The Last Dinner Party - Nothing Matters
+2024-10-15 14:54:30,169 - INFO - Searching for track: Magdalena Bay - She Looked Like Me! (Album: Imaginal Disk, Play count: 11)
+2024-10-15 14:54:30,324 - INFO - Found match with score 100.0: Magdalena Bay - She Looked Like Me!
+2024-10-15 14:54:30,324 - INFO - Searching for track: The Stone Roses - She Bangs the Drums - Remastered 2009 (Album: The Stone Roses, Play count: 10)
+2024-10-15 14:54:30,593 - INFO - Found match with score 100.0: The Stone Roses - She Bangs the Drums - Remastered 2009
+2024-10-15 14:54:30,593 - INFO - Searching for track: Lucy Dacus - Hot & Heavy (Album: Home Video, Play count: 10)
+2024-10-15 14:54:30,794 - INFO - Found match with score 100.0: Lucy Dacus - Hot & Heavy
+2024-10-15 14:54:30,794 - INFO - Searching for track: Jessie Ware - Freak Me Now (with Róisín Murphy) (Album: Freak Me Now (with Róisín Murphy), Play count: 10)
+2024-10-15 14:54:31,026 - INFO - Found match with score 100.0: Jessie Ware - Freak Me Now (with Róisín Murphy)
+2024-10-15 14:54:31,027 - INFO - Searching for track: Elliott Smith - Alameda (Album: Either/Or, Play count: 10)
+2024-10-15 14:54:31,161 - INFO - Found match with score 100.0: Elliott Smith - Alameda
+2024-10-15 14:54:31,161 - INFO - Searching for track: Charli XCX - Talk talk (Album: BRAT, Play count: 10)
+2024-10-15 14:54:31,330 - INFO - Found match with score 100.0: Charli xcx - Talk talk
+2024-10-15 14:54:31,330 - INFO - Searching for track: Elliott Smith - Ballad of Big Nothing (Album: Either/Or, Play count: 9)
+2024-10-15 14:54:31,470 - INFO - Found match with score 100.0: Elliott Smith - Ballad Of Big Nothing
+2024-10-15 14:54:31,470 - INFO - Searching for track: Charli XCX - Club classics (Album: BRAT, Play count: 9)
+2024-10-15 14:54:31,652 - INFO - Found match with score 100.0: Charli xcx - Club classics
+2024-10-15 14:54:31,652 - INFO - Searching for track: Chappell Roan - Red Wine Supernova (Album: The Rise and Fall of a Midwest Princess, Play count: 9)
+2024-10-15 14:54:31,849 - INFO - Found match with score 100.0: Chappell Roan - Red Wine Supernova
+2024-10-15 14:54:31,849 - INFO - Searching for track: Bon Iver - S P E Y S I D E (Album: S P E Y S I D E, Play count: 9)
+2024-10-15 14:54:31,981 - INFO - Found match with score 100.0: Bon Iver - S P E Y S I D E
+2024-10-15 14:54:31,982 - INFO - Searching for track: Baddiel, Skinner & The Lightning Seeds - Three Lions '98 (Album: Three Lions, Play count: 9)
+2024-10-15 14:54:32,127 - INFO - Found match with score 96.96969696969697: Baddiel, Skinner & Lightning Seeds - Three Lions '98
+2024-10-15 14:54:32,127 - INFO - Searching for track: The Smile - Wall of Eyes (Album: Wall of Eyes, Play count: 8)
+2024-10-15 14:54:32,422 - INFO - Found match with score 100.0: The Smile - Wall Of Eyes
+2024-10-15 14:54:32,423 - INFO - Searching for track: Elliott Smith - Southern Belle (Album: Elliott Smith, Play count: 8)
+2024-10-15 14:54:32,598 - INFO - Found match with score 100.0: Elliott Smith - Southern Belle
+2024-10-15 14:54:32,599 - INFO - Searching for track: Magdalena Bay - Image (Album: Imaginal Disk, Play count: 8)
+2024-10-15 14:54:32,774 - INFO - Found match with score 100.0: Magdalena Bay - Image
+2024-10-15 14:54:32,774 - INFO - Searching for track: Elliott Smith - Good to Go (Album: Elliott Smith, Play count: 8)
+2024-10-15 14:54:32,986 - INFO - Found match with score 100.0: Elliott Smith - Good To Go
+2024-10-15 14:54:32,987 - INFO - Searching for track: Magdalena Bay - True Blue Interlude (Album: Imaginal Disk, Play count: 8)
+2024-10-15 14:54:33,246 - INFO - Found match with score 100.0: Magdalena Bay - True Blue Interlude
+2024-10-15 14:54:33,246 - INFO - Searching for track: Magdalena Bay - Fear, Sex (Album: Imaginal Disk, Play count: 8)
+2024-10-15 14:54:33,374 - INFO - Found match with score 100.0: Magdalena Bay - Fear, Sex
+2024-10-15 14:54:33,374 - INFO - Searching for track: Sabrina Carpenter - Espresso (Album: Please Please Please, Play count: 8)
+2024-10-15 14:54:33,583 - INFO - Found match with score 100.0: Sabrina Carpenter - Espresso
+2024-10-15 14:54:33,583 - INFO - Searching for track: Charli xcx - Rewind (Album: BRAT, Play count: 7)
+2024-10-15 14:54:33,827 - INFO - Found match with score 100.0: Charli xcx - Rewind
+2024-10-15 14:54:33,827 - INFO - Searching for track: Magdalena Bay - Love Is Everywhere (Album: Imaginal Disk, Play count: 7)
+2024-10-15 14:54:33,974 - INFO - Found match with score 100.0: Magdalena Bay - Love Is Everywhere
+2024-10-15 14:54:33,975 - INFO - Searching for track: Magdalena Bay - Killing Time (Album: Imaginal Disk, Play count: 7)
+2024-10-15 14:54:34,152 - INFO - Found match with score 100.0: Magdalena Bay - Killing Time
+2024-10-15 14:54:34,152 - INFO - Searching for track: The Clash - Train in Vain (Stand by Me) - Remastered (Album: London Calling (Remastered), Play count: 7)
+2024-10-15 14:54:34,339 - INFO - Found match with score 100.0: The Clash - Train in Vain (Stand by Me) - Remastered
+2024-10-15 14:54:34,339 - INFO - Searching for track: The Rolling Stones - Paint It, Black (Album: Aftermath, Play count: 7)
+2024-10-15 14:54:34,509 - INFO - Found match with score 100.0: The Rolling Stones - Paint It, Black
+2024-10-15 14:54:34,510 - INFO - Searching for track: Adrianne Lenker - Ruined (Album: Bright Future, Play count: 6)
+2024-10-15 14:54:34,650 - INFO - Found match with score 100.0: Adrianne Lenker - Ruined
+2024-10-15 14:54:34,650 - INFO - Searching for track: Sabrina Carpenter - Good Graces (Album: Unknown Album, Play count: 6)
+2024-10-15 14:54:34,812 - INFO - Found match with score 100.0: Sabrina Carpenter - Good Graces
+2024-10-15 14:54:34,812 - INFO - Searching for track: Confidence Man - What I Like (Album: Tilt, Play count: 6)
+2024-10-15 14:54:34,971 - INFO - Found match with score 100.0: Confidence Man - What I Like
+2024-10-15 14:54:34,971 - INFO - Searching for track: MJ Lenderman - Manning Fireworks (Album: Manning Fireworks, Play count: 6)
+2024-10-15 14:54:35,095 - INFO - Found match with score 100.0: MJ Lenderman - Manning Fireworks
+2024-10-15 14:54:35,095 - INFO - Searching for track: Elliott Smith - Angeles (Album: Either/Or, Play count: 6)
+2024-10-15 14:54:35,239 - INFO - Found match with score 100.0: Elliott Smith - Angeles
+2024-10-15 14:54:35,239 - INFO - Searching for track: Magdalena Bay - That's My Floor (Album: Imaginal Disk, Play count: 6)
+2024-10-15 14:54:35,366 - INFO - Found match with score 100.0: Magdalena Bay - That's My Floor
+2024-10-15 14:54:35,366 - INFO - Searching for track: Magdalena Bay - Watching T.V. (Album: Imaginal Disk, Play count: 6)
+2024-10-15 14:54:35,700 - INFO - Found match with score 100.0: Magdalena Bay - Watching T.V.
+2024-10-15 14:54:35,701 - INFO - Searching for track: Magdalena Bay - Death & Romance (Album: Imaginal Disk, Play count: 6)
+2024-10-15 14:54:35,877 - INFO - Found match with score 100.0: Magdalena Bay - Death & Romance
+2024-10-15 14:54:35,878 - INFO - Searching for track: Gorillaz - On Melancholy Hill (Album: Plastic Beach, Play count: 6)
+2024-10-15 14:54:36,104 - INFO - Found match with score 100.0: Gorillaz - On Melancholy Hill
+2024-10-15 14:54:36,104 - INFO - Searching for track: Charli XCX - I might say something stupid (Album: BRAT, Play count: 6)
+2024-10-15 14:54:36,295 - INFO - Found match with score 100.0: Charli xcx - I might say something stupid
+2024-10-15 14:54:36,295 - INFO - Searching for track: Barry Can't Swim - Sunsleeper (Album: When Will We Land?, Play count: 6)
+2024-10-15 14:54:36,626 - INFO - Found match with score 100.0: Barry Can't Swim - Sunsleeper
+2024-10-15 14:54:36,626 - INFO - Searching for track: Radiohead - Let Down (Album: OK Computer, Play count: 6)
+2024-10-15 14:54:36,849 - INFO - Found match with score 100.0: Radiohead - Let Down
+2024-10-15 14:54:36,850 - INFO - Searching for track: The Last Dinner Party - The Feminine Urge (Album: Prelude to Ecstasy, Play count: 6)
+2024-10-15 14:54:37,086 - INFO - Found match with score 100.0: The Last Dinner Party - The Feminine Urge
+2024-10-15 14:54:37,086 - INFO - Searching for track: Adrianne Lenker - Cell Phone Says (Album: Bright Future, Play count: 5)
+2024-10-15 14:54:37,247 - INFO - Found match with score 100.0: Adrianne Lenker - Cell Phone Says
+2024-10-15 14:54:37,247 - INFO - Searching for track: Adrianne Lenker - Already Lost (Album: Bright Future, Play count: 5)
+2024-10-15 14:54:37,420 - INFO - Found match with score 100.0: Adrianne Lenker - Already Lost
+2024-10-15 14:54:37,420 - INFO - Searching for track: Adrianne Lenker - Donut Seam (Album: Bright Future, Play count: 5)
+2024-10-15 14:54:37,545 - INFO - Found match with score 100.0: Adrianne Lenker - Donut Seam
+2024-10-15 14:54:37,545 - INFO - Searching for track: The Stone Roses - I Am the Resurrection - Remastered 2009 (Album: The Stone Roses, Play count: 5)
+2024-10-15 14:54:37,710 - INFO - Found match with score 100.0: The Stone Roses - I Am the Resurrection - Remastered 2009
+2024-10-15 14:54:37,710 - INFO - Searching for track: MJ Lenderman - Joker Lips (Album: Manning Fireworks, Play count: 5)
+2024-10-15 14:54:37,864 - INFO - Found match with score 100.0: MJ Lenderman - Joker Lips
+2024-10-15 14:54:37,864 - INFO - Searching for track: MJ Lenderman - Rudolph (Album: Manning Fireworks, Play count: 5)
+2024-10-15 14:54:38,112 - INFO - Found match with score 100.0: MJ Lenderman - Rudolph - Live
+2024-10-15 14:54:38,112 - INFO - Searching for track: Fred again.. - Dermot (see yourself in my eyes) (Album: Actual Life (April 14 - December 17 2020), Play count: 5)
+2024-10-15 14:54:38,290 - INFO - Found match with score 100.0: Fred again.. - Dermot (see yourself in my eyes)
+2024-10-15 14:54:38,290 - INFO - Searching for track: The Stone Roses - I Wanna Be Adored - Remastered 2009 (Album: The Stone Roses, Play count: 5)
+2024-10-15 14:54:38,458 - INFO - Found match with score 100.0: The Stone Roses - I Wanna Be Adored - Remastered 2009
+2024-10-15 14:54:38,459 - INFO - Searching for track: Arcade Fire - Haiti (Album: Funeral, Play count: 5)
+2024-10-15 14:54:38,659 - INFO - Found match with score 100.0: Arcade Fire - Haiti
+2024-10-15 14:54:38,659 - INFO - Searching for track: Fontaines D.C. - I Love You (Album: Skinty Fia, Play count: 5)
+2024-10-15 14:54:38,832 - INFO - Found match with score 100.0: Fontaines D.C. - I Love You
+2024-10-15 14:54:38,832 - INFO - Searching for track: Elliott Smith - Single File (Album: Elliott Smith, Play count: 5)
+2024-10-15 14:54:39,082 - INFO - Found match with score 100.0: Elliott Smith - Single File
+2024-10-15 14:54:39,082 - INFO - Searching for track: Magdalena Bay - Vampire In The Corner (Album: Imaginal Disk, Play count: 5)
+2024-10-15 14:54:39,202 - INFO - Found match with score 100.0: Magdalena Bay - Vampire in the Corner
+2024-10-15 14:54:39,202 - INFO - Searching for track: Charli xcx - I think about it all the time (Album: BRAT, Play count: 5)
+2024-10-15 14:54:39,387 - INFO - Found match with score 100.0: Charli xcx - I think about it all the time featuring bon iver
+2024-10-15 14:54:39,387 - INFO - Searching for track: Fontaines D.C. - Jackie Down The Line (Album: Skinty Fia, Play count: 5)
+2024-10-15 14:54:39,533 - INFO - Found match with score 100.0: Fontaines D.C. - Jackie Down The Line
+2024-10-15 14:54:39,533 - INFO - Searching for track: Billie Eilish - LUNCH (Album: HIT ME HARD AND SOFT, Play count: 5)
+2024-10-15 14:54:39,666 - INFO - Found match with score 100.0: Billie Eilish - LUNCH
+2024-10-15 14:54:39,666 - INFO - Searching for track: Charli xcx - 365 featuring shygirl (Album: Brat and it’s completely different but also still brat, Play count: 4)
+2024-10-15 14:54:39,864 - INFO - Found match with score 100.0: Charli xcx - 365 featuring shygirl
+2024-10-15 14:54:39,864 - INFO - Searching for track: Barry Can't Swim - Kimbara (Album: Kimbara, Play count: 4)
+2024-10-15 14:54:40,003 - INFO - Found match with score 100.0: Barry Can't Swim - Kimbara
+2024-10-15 14:54:40,003 - INFO - Searching for track: Charli xcx - Mean girls featuring julian casablancas (Album: Brat and it’s completely different but also still brat, Play count: 4)
+2024-10-15 14:54:40,309 - INFO - Found match with score 100.0: Charli xcx - Mean girls featuring julian casablancas
+2024-10-15 14:54:40,309 - INFO - Searching for track: Charli xcx - Spring breakers (Album: Brat and it’s the same but there’s three more songs so it’s not, Play count: 4)
+2024-10-15 14:54:40,490 - INFO - Found match with score 100.0: Charli xcx - Spring breakers featuring kesha
+2024-10-15 14:54:40,490 - INFO - Searching for track: MJ Lenderman - Wristwatch (Album: Manning Fireworks, Play count: 4)
+2024-10-15 14:54:40,631 - INFO - Found match with score 100.0: MJ Lenderman - Wristwatch
+2024-10-15 14:54:40,631 - INFO - Searching for track: Fred again.. - Danielle (Smile On My Face) (Album: Actual Life 3 (January 1 - September 9 2022), Play count: 4)
+2024-10-15 14:54:40,924 - INFO - Found match with score 100.0: Fred again.. - Danielle (Smile on My Face)
+2024-10-15 14:54:40,924 - INFO - Searching for track: Elliott Smith - Alphabet Town (Album: Elliott Smith, Play count: 4)
+2024-10-15 14:54:41,071 - INFO - Found match with score 100.0: Elliott Smith - Alphabet Town - Live At Umbra Penumbra - September 17th, 1994
+2024-10-15 14:54:41,071 - INFO - Searching for track: Elliott Smith - Coming Up Roses (Album: Elliott Smith, Play count: 4)
+2024-10-15 14:54:41,229 - INFO - Found match with score 100.0: Elliott Smith - Coming Up Roses
+2024-10-15 14:54:41,230 - INFO - Searching for track: Elliott Smith - 2:45 AM (Album: Either/Or, Play count: 4)
+2024-10-15 14:54:41,388 - INFO - Found match with score 100.0: Elliott Smith - 2:45 AM - Remastered 2017
+2024-10-15 14:54:41,389 - INFO - Searching for track: Magdalena Bay - Cry For Me (Album: Imaginal Disk, Play count: 4)
+2024-10-15 14:54:41,540 - INFO - Found match with score 100.0: Magdalena Bay - Cry for Me
+2024-10-15 14:54:41,540 - INFO - Searching for track: Magdalena Bay - Feeling Diskinserted? (Album: Imaginal Disk, Play count: 4)
+2024-10-15 14:54:41,667 - INFO - Found match with score 100.0: Magdalena Bay - Feeling DiskInserted?
+2024-10-15 14:54:41,667 - INFO - Searching for track: Charli XCX - Everything is romantic (Album: BRAT, Play count: 4)
+2024-10-15 14:54:41,893 - INFO - Found match with score 100.0: Charli xcx - Everything is romantic featuring caroline polachek
+2024-10-15 14:54:41,893 - INFO - Searching for track: Ed Sheeran - Bad Habits (Album: Bad Habits, Play count: 4)
+2024-10-15 14:54:42,162 - INFO - Found match with score 100.0: Ed Sheeran - Bad Habits
+2024-10-15 14:54:42,163 - INFO - Searching for track: LCD Soundsystem - Home (Album: This Is Happening, Play count: 4)
+2024-10-15 14:54:42,374 - INFO - Found match with score 100.0: LCD Soundsystem - Home
+2024-10-15 14:54:42,374 - INFO - Searching for track: The Stone Roses - Waterfall - Remastered 2009 (Album: The Stone Roses, Play count: 4)
+2024-10-15 14:54:42,537 - INFO - Found match with score 100.0: The Stone Roses - Waterfall - Remastered 2009
+2024-10-15 14:54:42,537 - INFO - Searching for track: Jamie xx - Wanna (Album: In Waves, Play count: 3)
+2024-10-15 14:54:42,679 - INFO - Found match with score 100.0: Jamie xx - Wanna
+2024-10-15 14:54:42,679 - INFO - Searching for track: Bon Iver - 715 - CR∑∑KS (Album: 22, a Million, Play count: 3)
+2024-10-15 14:54:42,834 - INFO - Found match with score 100.0: Bon Iver - 715 - CR∑∑KS
+2024-10-15 14:54:43,609 - INFO - Found existing playlist: Bobby's Hot 💯
+2024-10-15 14:54:43,611 - INFO - Updating playlist 5iFg7DdS2m8XV8kmQqg4SU with 100 tracks
+2024-10-15 14:54:43,867 - INFO - Added 100 tracks to playlist
+2024-10-15 14:54:44,071 - INFO - Playlist update completed with randomized order
+2024-10-15 14:54:44,071 - INFO - Playlist 'Bobby's Hot 💯' updated with 100 tracks in random order.
+2024-10-15 14:54:44,825 - INFO - Playlist link: https://open.spotify.com/playlist/5iFg7DdS2m8XV8kmQqg4SU

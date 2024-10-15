@@ -2,17 +2,19 @@
 
 import os
 import sys
-import re
 import logging
 import time
+import signal
 from datetime import datetime, timezone
 import sqlite3
 from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from rapidfuzz import fuzz, process
+from rapidfuzz import fuzz
 from src.utils import normalize_string
 from src.database import Database
+from typing import List, Dict, Tuple, Optional, Set, Any, Callable
+from concurrent.futures import ThreadPoolExecutor, TimeoutError
 
 # Load environment variables
 load_dotenv()
@@ -21,16 +23,25 @@ load_dotenv()
 SPOTIFY_DB_FILE = os.getenv('SPOTIFY_DB_FILE', 'db/spotify_liked_songs.db')
 LASTFM_DB_FILE = os.getenv('LASTFM_DB_FILE', 'db/lastfm_history.db')
 
+class TimeoutException(Exception):
+    pass
+
+def timeout_handler(signum, frame):
+    raise TimeoutException("Processing took too long")
+
 class SpotifyOperations:
-    """Handles operations related to Spotify, including searching and liking tracks."""
+    """Handles operations related to Spotify, including searching and liking tracks and albums."""
 
     def __init__(self, db_file=SPOTIFY_DB_FILE):
         """Initialize the Spotify operations and create necessary database tables."""
-        self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope="user-library-read user-library-modify"))
+        self.sp = spotipy.Spotify(
+            auth_manager=SpotifyOAuth(scope="user-library-read user-library-modify"),
+            requests_timeout=10  # Set a timeout of 10 seconds
+        )
         self.db_file = db_file
-        self.create_table()
+        self.create_tables()
 
-    def create_table(self):
+    def create_tables(self):
         """Create necessary tables in the database if they don't exist."""
         conn = sqlite3.connect(self.db_file)
         c = conn.cursor()
@@ -51,6 +62,10 @@ class SpotifyOperations:
         c.execute('''CREATE TABLE IF NOT EXISTS unfound_tracks
                      (artist TEXT, name TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
                       PRIMARY KEY (artist, name))''')
+        
+        # Create saved_albums table if it doesn't exist
+        c.execute('''CREATE TABLE IF NOT EXISTS saved_albums
+                     (id TEXT PRIMARY KEY, name TEXT, artist TEXT, added_at TEXT)''')
         
         conn.commit()
         conn.close()
@@ -129,15 +144,24 @@ class SpotifyOperations:
         batch_size = 50  # Spotify allows up to 50 tracks to be liked at once
         for i in range(0, len(track_ids), batch_size):
             batch = track_ids[i:i+batch_size]
-            try:
-                self.sp.current_user_saved_tracks_add(tracks=batch)
-                logging.info(f"Liked {len(batch)} tracks")
-                # After liking tracks, add them to the local database
-                self._save_newly_liked_tracks(batch)
-                logging.info(f"Saved {len(batch)} newly liked tracks to local database")
-            except spotipy.exceptions.SpotifyException as e:
-                logging.error(f"Error liking tracks: {e}")
-                time.sleep(2)  # Wait before retrying
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    self.sp.current_user_saved_tracks_add(tracks=batch)
+                    logging.info(f"Liked {len(batch)} tracks")
+                    # After liking tracks, add them to the local database
+                    self._save_newly_liked_tracks(batch)
+                    logging.info(f"Saved {len(batch)} newly liked tracks to local database")
+                    break  # Success, exit retry loop
+                except spotipy.exceptions.SpotifyException as e:
+                    logging.error(f"Error liking tracks (attempt {attempt + 1}/{max_retries}): {e}")
+                    if attempt < max_retries - 1:
+                        time.sleep(2 ** attempt)  # Exponential backoff
+                    else:
+                        logging.error(f"Failed to like tracks after {max_retries} attempts")
+                except Exception as e:
+                    logging.error(f"Unexpected error liking tracks: {e}", exc_info=True)
+                    break  # Exit retry loop for unexpected errors
             time.sleep(0.1)  # Add a small delay to avoid rate limiting
 
     def _save_newly_liked_tracks(self, track_ids):
@@ -191,10 +215,15 @@ class SpotifyOperations:
         ]
 
         for query in queries:
-            track_id = self._search_and_match(query, name, artist)
-            if track_id:
-                self.cache_track_id(name, artist, track_id)
-                return track_id
+            try:
+                track_id = self._search_and_match(query, name, artist)
+                if track_id:
+                    self.cache_track_id(name, artist, track_id)
+                    return track_id
+            except Exception as e:
+                logging.error(f"Error searching for track '{name}' by '{artist}': {e}", exc_info=True)
+                time.sleep(1)  # Add a small delay before trying the next query
+                continue
 
         # Cache negative result
         self.cache_track_id(name, artist, None)
@@ -202,29 +231,37 @@ class SpotifyOperations:
 
     def _search_and_match(self, query, name, artist):
         """Perform a search query and match results against the given name and artist."""
-        try:
-            results = self.sp.search(q=query, type='track', limit=10)
-            if results['tracks']['items']:
-                best_match = None
-                highest_score = 0
-                for item in results['tracks']['items']:
-                    spotify_name = normalize_string(item['name'])
-                    spotify_artist = normalize_string(item['artists'][0]['name'])
-                    name_score = fuzz.token_sort_ratio(name, spotify_name)
-                    artist_score = fuzz.token_sort_ratio(artist, spotify_artist)
-                    total_score = (name_score + artist_score) / 2
-                    if total_score > highest_score:
-                        highest_score = total_score
-                        best_match = item['id']
-                if highest_score > 80:  # Threshold can be adjusted
-                    return best_match
-            return None
-        except spotipy.exceptions.SpotifyException as e:
-            logging.error(f"Spotify API error: {e}")
-            time.sleep(2)  # Wait before retrying
-            return None
-        finally:
-            time.sleep(0.1)  # Small delay to respect rate limits
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                results = self.sp.search(q=query, type='track', limit=10)
+                if results['tracks']['items']:
+                    best_match = None
+                    highest_score = 0
+                    for item in results['tracks']['items']:
+                        spotify_name = normalize_string(item['name'])
+                        spotify_artist = normalize_string(item['artists'][0]['name'])
+                        name_score = fuzz.token_sort_ratio(name, spotify_name)
+                        artist_score = fuzz.token_sort_ratio(artist, spotify_artist)
+                        total_score = (name_score + artist_score) / 2
+                        if total_score > highest_score:
+                            highest_score = total_score
+                            best_match = item['id']
+                    if highest_score > 80:  # Threshold can be adjusted
+                        return best_match
+                return None
+            except spotipy.exceptions.SpotifyException as e:
+                logging.error(f"Spotify API error during search (attempt {attempt + 1}/{max_retries}): {e}")
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)  # Exponential backoff
+                else:
+                    logging.error(f"Failed to search after {max_retries} attempts")
+            except Exception as e:
+                logging.error(f"Unexpected error during search: {e}", exc_info=True)
+                break  # Exit retry loop for unexpected errors
+            finally:
+                time.sleep(0.1)  # Small delay to respect rate limits
+        return None
 
     def get_cached_track_id(self, name, artist):
         conn = sqlite3.connect(self.db_file)
@@ -334,18 +371,30 @@ class SpotifyOperations:
         offset = 0
         limit = 50
         new_tracks = []
+        max_iterations = 20  # Limit the number of iterations to prevent infinite loops
 
-        while True:
-            results = self.sp.current_user_saved_tracks(limit=limit, offset=offset)
-            if not results['items']:
+        logging.info("Fetching new liked songs from Spotify...")
+        iterations = 0
+
+        while iterations < max_iterations:
+            try:
+                results = self.sp.current_user_saved_tracks(limit=limit, offset=offset)
+                if not results['items']:
+                    break
+                for item in results['items']:
+                    added_at = datetime.strptime(item['added_at'], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+                    if last_update and added_at <= last_update:
+                        logging.info("Reached tracks already in local database.")
+                        return new_tracks
+                    new_tracks.append(item)
+                offset += limit
+                iterations += 1
+                time.sleep(0.1)  # Small delay to respect rate limits
+            except Exception as e:
+                logging.error(f"Error fetching liked songs: {e}", exc_info=True)
                 break
-            for item in results['items']:
-                added_at = datetime.strptime(item['added_at'], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
-                if last_update and added_at <= last_update:
-                    # Since the list is in descending order, we can stop here
-                    return new_tracks
-                new_tracks.append(item)
-            offset += limit
+
+        logging.info(f"Fetched {len(new_tracks)} new liked songs from Spotify.")
         return new_tracks
 
     def update_liked_songs(self, force_full_fetch=False):
@@ -354,7 +403,7 @@ class SpotifyOperations:
             logging.info("Fetching all liked songs from Spotify.")
             total_tracks = self.fetch_all_liked_songs()
             logging.info(f"Fetched {total_tracks} liked songs from Spotify.")
-            self.set_last_update_time(datetime.now(timezone.utc))
+            self.set_last_update_time(datetime.utcnow().replace(tzinfo=timezone.utc))
             
             # Add logging to verify database update
             conn = sqlite3.connect(self.db_file)
@@ -371,12 +420,13 @@ class SpotifyOperations:
                 logging.info("No new liked songs to update.")
                 return 0
             self._save_tracks_to_db(new_tracks)
-            latest_added_at = max(
-                datetime.strptime(item['added_at'], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
-                for item in new_tracks
-            )
-            self.set_last_update_time(latest_added_at)
-            logging.info(f"Updated last update time to: {latest_added_at.isoformat()}")
+            if new_tracks:
+                latest_added_at = max(
+                    datetime.strptime(item['added_at'], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+                    for item in new_tracks
+                )
+                self.set_last_update_time(latest_added_at)
+                logging.info(f"Updated last update time to: {latest_added_at.isoformat()}")
             
             # Add logging to verify database update
             conn = sqlite3.connect(self.db_file)
@@ -440,22 +490,196 @@ class SpotifyOperations:
         conn.close()
         return album_ids
 
-    def search_album(self, album_name, artist_name):
+    def search_album(self, album_name: str, artist_name: str) -> Optional[str]:
         """
         Search for an album on Spotify and return its ID if found.
-        
-        Args:
-        album_name (str): The name of the album to search for.
-        artist_name (str): The name of the artist of the album.
-        
-        Returns:
-        str or None: The Spotify album ID if found, None otherwise.
         """
-        query = f"album:{album_name} artist:{artist_name}"
+        normalized_album = normalize_string(album_name)
+        normalized_artist = normalize_string(artist_name)
+        query = f"album:{normalized_album} artist:{normalized_artist}"
+        logging.info(f"Searching for album on Spotify: {artist_name} - {album_name}")
         try:
-            results = self.sp.search(q=query, type='album', limit=1)
+            results = self.sp.search(q=query, type='album', limit=5)
             if results['albums']['items']:
-                return results['albums']['items'][0]['id']
-        except spotipy.exceptions.SpotifyException as e:
-            logging.error(f"Error searching for album: {e}")
+                # Use fuzzy matching to find the best match
+                best_match_id = None
+                highest_score = 0
+                for item in results['albums']['items']:
+                    spotify_album = normalize_string(item['name'])
+                    spotify_artist = normalize_string(item['artists'][0]['name'])
+                    album_score = fuzz.token_sort_ratio(normalized_album, spotify_album)
+                    artist_score = fuzz.token_sort_ratio(normalized_artist, spotify_artist)
+                    total_score = (album_score + artist_score) / 2
+                    if total_score > highest_score:
+                        highest_score = total_score
+                        best_match_id = item['id']
+                if highest_score > 80:
+                    logging.info(f"Found album on Spotify with score {highest_score}: ID {best_match_id}")
+                    return best_match_id
+                else:
+                    logging.info("No matching album found with sufficient confidence.")
+            else:
+                logging.info("No albums found in search results.")
+        except Exception as e:
+            logging.error(f"Error searching for album: {e}", exc_info=True)
         return None
+
+    def fetch_all_saved_albums(self):
+        """Fetch all saved albums from Spotify and store them in the local database."""
+        offset = 0
+        limit = 50
+        all_albums = []
+
+        logging.info("Fetching saved albums from Spotify...")
+        while True:
+            results = self.sp.current_user_saved_albums(limit=limit, offset=offset)
+            albums = results['items']
+            if not albums:
+                break
+            all_albums.extend(albums)
+            offset += limit
+            time.sleep(0.1)  # Respect rate limits
+
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+
+        for item in all_albums:
+            album = item['album']
+            name = normalize_string(album['name'])
+            artist = normalize_string(album['artists'][0]['name'])
+            album_id = album['id']
+            added_at = item['added_at']
+            c.execute("INSERT OR REPLACE INTO saved_albums VALUES (?, ?, ?, ?)",
+                      (album_id, name, artist, added_at))
+
+        conn.commit()
+        conn.close()
+
+        logging.info(f"Fetched and stored {len(all_albums)} saved albums.")
+        return len(all_albums)
+
+    def get_saved_albums_set(self) -> Set[str]:
+        """Retrieve set of album IDs that are saved in the local database."""
+        conn = sqlite3.connect(self.db_file)
+        c = conn.cursor()
+        c.execute("SELECT id FROM saved_albums")
+        saved_albums = set(row[0] for row in c.fetchall())
+        conn.close()
+        logging.info(f"Retrieved {len(saved_albums)} saved albums from local database.")
+        return saved_albums
+
+    def save_album(self, album_id: str) -> None:
+        """Save an album to the user's Spotify library and update the local database."""
+        try:
+            self.sp.current_user_saved_albums_add([album_id])
+            logging.info(f"Saved album to Spotify library: {album_id}")
+
+            # Fetch album details to store in the database
+            album = self.sp.album(album_id)
+            name = normalize_string(album['name'])
+            artist = normalize_string(album['artists'][0]['name'])
+            added_at = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat()
+
+            # Update local database
+            conn = sqlite3.connect(self.db_file)
+            c = conn.cursor()
+            c.execute("INSERT OR REPLACE INTO saved_albums VALUES (?, ?, ?, ?)",
+                      (album_id, name, artist, added_at))
+            conn.commit()
+            conn.close()
+            logging.info(f"Updated local database with album: {artist} - {name}")
+
+        except Exception as e:
+            logging.error(f"Error saving album {album_id}: {e}", exc_info=True)
+
+    def api_call_with_retry(self, func: Callable, *args, max_retries: int = 3, **kwargs) -> Any:
+        for attempt in range(max_retries):
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    logging.warning(f"API call failed, retrying in {1 + attempt} seconds...")
+                    time.sleep(1 + attempt)  # Shorter wait times
+                else:
+                    logging.error(f"API call failed after {max_retries} attempts: {e}", exc_info=True)
+                    raise
+
+    def check_album_conditions(self, album_id: str) -> bool:
+        """Check if an album meets the criteria to be saved."""
+        logging.info(f"Starting to check album conditions for album_id: {album_id}")
+        try:
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(self.api_call_with_retry, self.sp.album, album_id)
+                try:
+                    album = future.result(timeout=30)  # Increased from 10 to 30 seconds
+                except TimeoutError:
+                    logging.error(f"TimeoutError: Fetching album details for album_id {album_id} took too long.")
+                    return False
+
+            album_name = album['name']
+            artist_name = album['artists'][0]['name']
+
+            if 'various artists' in artist_name.lower():
+                return False
+
+            album_tracks = self.get_album_tracks(album_id)
+            total_tracks = len(album_tracks)
+
+            if total_tracks <= 6:
+                return False
+
+            listened_tracks = 0
+            tracks_listened_3_times = 0
+
+            conn = sqlite3.connect(LASTFM_DB_FILE)
+            c = conn.cursor()
+            try:
+                for track in album_tracks:
+                    normalized_track = normalize_string(track['name'])
+                    normalized_artist = normalize_string(artist_name)
+                    c.execute(
+                        "SELECT listen_count FROM tracks WHERE name = ? AND artist = ?",
+                        (normalized_track, normalized_artist)
+                    )
+                    result = c.fetchone()
+                    listen_count = result[0] if result else 0
+                    if listen_count > 0:
+                        listened_tracks += 1
+                    if listen_count >= 3:
+                        tracks_listened_3_times += 1
+            finally:
+                conn.close()
+
+            condition1 = listened_tracks >= 0.75 * total_tracks
+            condition2 = tracks_listened_3_times >= 3
+
+            return condition1 or condition2
+        except Exception as e:
+            logging.error(f"Error in check_album_conditions for album_id {album_id}: {e}", exc_info=True)
+            return False
+
+    def get_album_tracks(self, album_id: str) -> List[dict]:
+        """Retrieve all tracks from an album."""
+        tracks = []
+        try:
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(self.api_call_with_retry, self.sp.album_tracks, album_id)
+                try:
+                    results = future.result(timeout=30)  # Increased from 10 to 30 seconds
+                except TimeoutError:
+                    logging.error(f"TimeoutError: Fetching album tracks for album_id {album_id} took too long.")
+                    return []
+
+            tracks.extend(results['items'])
+            while results['next']:
+                with ThreadPoolExecutor(max_workers=1) as executor:
+                    future = executor.submit(self.api_call_with_retry, self.sp.next, results)
+                    try:
+                        results = future.result(timeout=30)  # Increased from 10 to 30 seconds
+                    except TimeoutError:
+                        logging.error(f"TimeoutError: Fetching next page of tracks for album_id {album_id} took too long.")
+                        break
+                tracks.extend(results['items'])
+        except Exception as e:
+            logging.error(f"Error fetching tracks for album {album_id}: {e}", exc_info=True)
+        return tracks

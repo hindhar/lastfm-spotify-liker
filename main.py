@@ -2,7 +2,7 @@ import os
 import sys
 import subprocess
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Add the project root to the Python path
 project_root = os.path.abspath(os.path.dirname(__file__))
@@ -26,7 +26,7 @@ def run_script(script_name):
         logging.error(f"Error running {script_name}: {e}")
 
 def main():
-    logging.info("Starting main process")
+    logging.info(f"Starting main process at {datetime.utcnow().replace(tzinfo=timezone.utc).isoformat()}")
     
     # Run lastfm_spotify_liker.py
     run_script('lastfm_spotify_liker.py')
@@ -37,7 +37,7 @@ def main():
     # Run hot_100_playlist.py
     run_script('hot_100_playlist.py')
     
-    logging.info("Main process completed")
+    logging.info(f"Main process completed at {datetime.utcnow().replace(tzinfo=timezone.utc).isoformat()}")
 
 if __name__ == "__main__":
     main()
