@@ -24,6 +24,10 @@ def run_script(script_name):
         logging.info(f"{script_name} completed successfully")
     except subprocess.CalledProcessError as e:
         logging.error(f"Error running {script_name}: {e}")
+    except FileNotFoundError:
+        logging.error(f"Script file not found: {script_path}")
+    except Exception as e:
+        logging.error(f"Unexpected error running {script_name}: {e}")
 
 def main():
     logging.info(f"Starting main process at {datetime.utcnow().replace(tzinfo=timezone.utc).isoformat()}")

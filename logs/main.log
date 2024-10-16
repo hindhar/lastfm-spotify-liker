@@ -1,0 +1,8 @@
+2024-10-16 16:38:50,912 - INFO - Starting main process at 2024-10-16T15:38:50.912150+00:00
+2024-10-16 16:38:50,913 - INFO - Running lastfm_spotify_liker.py
+2024-10-16 16:46:04,876 - INFO - lastfm_spotify_liker.py completed successfully
+2024-10-16 16:46:04,881 - INFO - Running album_saver.py
+2024-10-16 16:46:43,297 - INFO - album_saver.py completed successfully
+2024-10-16 16:46:43,298 - INFO - Running hot_100_playlist.py
+2024-10-16 16:47:15,687 - INFO - hot_100_playlist.py completed successfully
+2024-10-16 16:47:15,692 - INFO - Main process completed at 2024-10-16T15:47:15.688360+00:00
