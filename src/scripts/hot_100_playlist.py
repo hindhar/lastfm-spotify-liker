@@ -8,7 +8,7 @@ import sqlite3
 import logging
 import random
 import requests
-import time  # <-- Add this import
+import time
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 import spotipy
@@ -43,11 +43,16 @@ PLAYLIST_ID_FILE = 'playlist_id.txt'
 DEFAULT_TIME_RANGE_DAYS = 100
 DEFAULT_TRACK_LIMIT = 100
 
+# Ensure the 'logs' directory exists
+logs_dir = os.path.join(project_root, 'logs')
+if not os.path.exists(logs_dir):
+    os.makedirs(logs_dir)
+
 # Set up logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
-    filename='logs/hot_100_playlist.log',
+    filename=os.path.join(logs_dir, 'hot_100_playlist.log'),
     filemode='a'
 )
 console = logging.StreamHandler()
@@ -245,7 +250,7 @@ def update_playlist(sp: spotipy.Spotify, playlist_id: str, track_ids: List[str])
 
 def main():
     try:
-        # Prompt the user for playlist name and time range
+        # Playlist settings
         playlist_name = DEFAULT_PLAYLIST_NAME
         time_range_days = DEFAULT_TIME_RANGE_DAYS
         track_limit = DEFAULT_TRACK_LIMIT
@@ -274,7 +279,7 @@ def main():
         # Build a dictionary to keep track of the highest play count for each track
         track_dict = {}
         for artist, name, album, play_count in all_tracks:
-            key = (normalize_string(artist), normalize_string(name))
+            key = (artist.lower(), name.lower(), album.lower())
             if key not in track_dict or play_count > track_dict[key]['play_count']:
                 track_dict[key] = {
                     'artist': artist,
@@ -309,18 +314,25 @@ def main():
                 for item in results['tracks']['items']:
                     spotify_artist = item['artists'][0]['name']
                     spotify_name = item['name']
-                    artist_score = fuzz.token_sort_ratio(normalize_string(artist), normalize_string(spotify_artist))
-                    name_score = fuzz.token_sort_ratio(normalize_string(name), normalize_string(spotify_name))
-                    total_score = (artist_score + name_score) / 2
+                    spotify_album = item['album']['name']
+                    artist_score = fuzz.token_sort_ratio(artist.lower(), spotify_artist.lower())
+                    name_score = fuzz.token_sort_ratio(name.lower(), spotify_name.lower())
+                    album_score = fuzz.token_sort_ratio(album.lower(), spotify_album.lower())
+                    total_score = (artist_score * 0.3) + (name_score * 0.4) + (album_score * 0.3)
                     if total_score > highest_score:
                         highest_score = total_score
                         best_match_id = item['id']
-                if highest_score > 80 and best_match_id:
+                        best_match_info = {
+                            'artist': spotify_artist,
+                            'name': spotify_name,
+                            'album': spotify_album
+                        }
+                if highest_score > 75 and best_match_id:
                     spotify_track_ids.append(best_match_id)
                     track_count += 1
-                    logging.info(f"Found match with score {highest_score}: {spotify_artist} - {spotify_name}")
+                    logging.info(f"Found match with score {highest_score:.2f}: {best_match_info['artist']} - {best_match_info['name']} (Album: {best_match_info['album']})")
                 else:
-                    logging.warning(f"No suitable match found for: {artist} - {name}")
+                    logging.warning(f"No suitable match found for: {artist} - {name} (Album: {album})")
             except Exception as e:
                 logging.error(f"Error searching for track on Spotify: {e}", exc_info=True)
                 continue
