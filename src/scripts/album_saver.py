@@ -25,6 +25,7 @@ load_dotenv()
 LASTFM_DB_FILE = os.getenv('LASTFM_DB_FILE', 'db/lastfm_history.db')
 SPOTIFY_DB_FILE = os.getenv('SPOTIFY_DB_FILE', 'db/spotify_liked_songs.db')
 ALBUM_SAVER_DB_FILE = os.path.join(project_root, 'db', 'album_saver.db')
+REMOVED_ALBUMS_DB_FILE = os.path.join(project_root, 'db', 'removed_albums.db')
 
 # Ensure the 'logs' directory exists
 logs_dir = os.path.join(project_root, 'logs')
@@ -52,6 +53,7 @@ class AlbumSaver:
         self.sp = self.spotify_ops.sp  # Use the Spotify client from SpotifyOperations
         self.create_album_saver_table()
         self.saved_albums = self.get_all_saved_albums()  # Load saved albums from local database
+        self.removed_albums = self.get_removed_albums()  # Load removed albums from removed_albums.db
 
     def create_album_saver_table(self) -> None:
         """Create the necessary tables in the album_saver database."""
@@ -118,6 +120,22 @@ class AlbumSaver:
         logging.info(f"Retrieved {len(saved_albums)} saved albums from album_saver database.")
         return saved_albums
 
+    def get_removed_albums(self) -> Set[tuple]:
+        """Retrieve all removed albums (normalized name and artist) from the removed_albums database."""
+        if not os.path.exists(REMOVED_ALBUMS_DB_FILE):
+            logging.info("No removed_albums.db found. No albums will be excluded based on previous removals.")
+            return set()
+
+        conn = sqlite3.connect(REMOVED_ALBUMS_DB_FILE)
+        c = conn.cursor()
+        c.execute("SELECT album_name, artist_name FROM removed_albums")
+        removed_albums = set(
+            (normalize_string(row[0]), normalize_string(row[1])) for row in c.fetchall()
+        )
+        conn.close()
+        logging.info(f"Loaded {len(removed_albums)} albums from removed_albums.db to exclude.")
+        return removed_albums
+
     def get_last_update_time(self) -> Optional[datetime]:
         """Retrieve the last update time from the metadata table."""
         conn = sqlite3.connect(ALBUM_SAVER_DB_FILE)
@@ -164,6 +182,11 @@ class AlbumSaver:
                 # Skip 'Various Artists'
                 if 'various artists' in normalized_artist.lower():
                     logging.info(f"Skipping 'Various Artists' album: {artist_name} - {album_name}")
+                    continue
+
+                # Skip albums that were previously removed
+                if (normalized_album, normalized_artist) in self.removed_albums:
+                    logging.info(f"Skipping previously removed album: {artist_name} - {album_name}")
                     continue
 
                 logging.info(f"Processing album {index}/{len(albums_to_check)}: {artist_name} - {album_name}")
